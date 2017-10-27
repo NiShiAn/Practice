@@ -1,0 +1,54 @@
+﻿@model List<Test.COM.Entity.SpotInfo>
+@{
+    ViewBag.Title = "Export";
+}
+
+<h2>文件导出</h2>
+
+<div class="container">
+    <div class="form-inline">
+        <div class="form-group">
+            <button class="btn btn-primary" onclick="exportExcel(1);">List导出</button>
+        </div>
+        <div class="form-group">
+            <button class="btn btn-primary" onclick="exportExcel(2);">DataTable导出</button>
+        </div>
+        <div class="form-group">
+            <button class="btn btn-primary" onclick="exportExcel(3);">多个DataTable导出</button>
+        </div>
+    </div>
+    <hr/>
+    <table class="table" id="mytable">
+        <tr class="active">
+            <th>团队ID</th>
+            <th>团队名称</th>
+            <th>景点名称</th>
+            <th>票种</th>
+            <th>时间</th>
+            <th>单价</th>
+            <th>数量</th>
+            <th>减免</th>
+            <th>总金额</th>
+        </tr>
+        @foreach (var info in Model)
+        {
+            <tr>
+                <td>@info.TourNo</td>
+                <td>@info.TourName</td>
+                <td>@info.SpotName</td>
+                <td>@info.TicketName</td>
+                <td>@info.TourDate.ToShortDateString()</td>
+                <td>@info.UnitPrice.ToString("0.00")</td>
+                <td>@info.SpotQuantity</td>
+                <td>@info.FreeQuantity</td>
+                <td>@info.TotalAmount.ToString("0.00")</td>
+            </tr>
+        }
+    </table>
+</div>
+
+<script>
+    function exportExcel(type) {
+        window.location = "/Home/ExportTable?type=" + type;
+    }
+</script>

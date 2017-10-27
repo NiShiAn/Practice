@@ -1,0 +1,91 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>列表行移动</h2>
+
+<table class="table" id="mytable">
+    <tr class="active">
+        <th>编号</th>
+        <th>姓名</th>
+        <th>性别</th>
+        <th>毕业学校</th>
+        <th>专业</th>
+        <th>操作</th>
+    </tr>
+    <tr>
+        <td>1</td>
+        <td>彭于晏</td>
+        <td>男</td>
+        <td>台北大学</td>
+        <td>不知道</td>
+        <td><a style="display: none;" onclick="myPage.moveTr(this, 'up');">上移 </a><a onclick="myPage.moveTr(this, 'down');"> 下移</a></td>
+    </tr>
+    <tr>
+        <td>2</td>
+        <td>阮经天</td>
+        <td>男</td>
+        <td>台南大学</td>
+        <td>不知道</td>
+        <td><a onclick="myPage.moveTr(this, 'up');">上移 </a><a onclick="myPage.moveTr(this, 'down');"> 下移</a></td>
+    </tr>
+    <tr>
+        <td>3</td>
+        <td>赵又廷</td>
+        <td>男</td>
+        <td>台东大学</td>
+        <td>不知道</td>
+        <td><a onclick="myPage.moveTr(this, 'up');">上移 </a><a onclick="myPage.moveTr(this, 'down');"> 下移</a></td>
+    </tr>
+    <tr>
+        <td>4</td>
+        <td>黄晓明</td>
+        <td>男</td>
+        <td>台北大学</td>
+        <td>不知道</td>
+        <td><a onclick="myPage.moveTr(this, 'up');">上移 </a><a onclick="myPage.moveTr(this, 'down');" style="display: none;"> 下移</a></td>
+    </tr>
+</table>
+
+<script>
+    var myPage = {
+        moveTr: function(ngy, action) {
+            var thisTr = $(ngy).closest('tr'); //获取到触发的tr
+
+            if(action == "up"){    //向上移动
+                if ($(thisTr).prev().attr('class') == "active") { //获取tr的前一个相同等级的元素是否为空
+                    alert("不能往上移了!");
+                    return;
+                }
+
+                $(thisTr).insertBefore($(thisTr).prev()); //将本身插入到目标tr的前面 
+            } else {
+                if ($(thisTr).next().html() == null) {
+                    alert("不能往下移了!");
+                    return;
+                } 
+
+                $(thisTr).insertAfter($(thisTr).next()); //将本身插入到目标tr的后面 
+            }
+            myPage.afreshTable();
+        },
+        afreshTable: function () {
+            var len = $("#mytable tr:gt(0)").length;
+            $("#mytable tr:gt(0)").each(function (index) {
+                var as = $(this).find('a');
+                if (index == 0) {
+                    $(as[0]).hide();
+                    $(as[1]).show();
+                } else if (index === len - 1) {
+                    $(as[0]).show();
+                    $(as[1]).hide();
+                } else {
+                    $(as[0]).show();
+                    $(as[1]).show();
+                }
+            });
+        }
+    }
+</script>
+

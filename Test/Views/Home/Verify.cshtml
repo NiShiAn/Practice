@@ -1,0 +1,68 @@
+﻿
+@{
+    ViewBag.Title = "Verify";
+}
+<style>
+    .input {
+        width: 300px;
+        display: inline;
+    }
+    span {
+        color: #DC4444;
+    }
+</style>
+<h2>正则验证</h2>
+
+<div class="container">
+    <form class="form-horizontal" role="form" id="mainf">
+        <div class="form-group">
+            <label class="col-sm-2 control-label">姓名</label>
+            <div class="col-sm-10">
+                <input type="text" class="form-control input" placeholder="请输入汉字"/>
+                <span></span>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-2 control-label">生日</label>
+            <div class="col-sm-10">
+                <input type="text" class="form-control input" placeholder="请输入日期:2017-10-19"/>
+                <span></span>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-2 control-label">时间</label>
+            <div class="col-sm-10">
+                <input type="text" class="form-control input" placeholder="请输入时间:09:10 PM"/>
+                <span></span>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-sm-2"></div>
+            <div class="col-sm-10">
+                <button class="btn btn-primary" type="button" onclick="pageJs.submit();">提交</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+<script type="text/javascript">
+    var pageJs = {
+        submit: function() {
+            $("#mainf").find('input').each(function (index) {
+                var reg = /^[\u4e00-\u9fa5]{0,}$/;
+                switch (index) {
+                    case 1:
+                        reg = /^[1-9]\d{3}-(0[1-9]|1[0-2])-(0[1-9]|[1-2][0-9]|3[0-1])$/;
+                        break;
+                    case 2:
+                        reg = /^([1-9]|1[0-2]|0[1-9]):([0-5]\d|\d)\s(AM|PM|am|pm)$/;
+                }
+                if (!reg.test($(this).val().trim())) {
+                    $(this).next().text("输入格式错误");
+                } else {
+                    $(this).next().text("");
+                }
+            });
+        }
+    }
+</script>

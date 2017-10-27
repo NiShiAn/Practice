@@ -1,0 +1,138 @@
+﻿
+@{
+    ViewBag.Title = "Table";
+}
+<style>
+     .box {
+         box-sizing: border-box;
+         position: relative;
+         overflow: hidden;
+     }
+    .bar {
+        display: flex;
+        display: -webkit-flex;
+        width: 90px;
+        height: 100%;
+        top: 0;
+        text-align: center;
+        line-height: 40px;
+        position: absolute;
+        right: -90px;
+        background-color: rgba(0, 0, 0, 0.4);
+        cursor: pointer;
+    }
+
+    .box:hover .bar {
+        right: 0;
+    }
+
+    .bar > span {
+        flex: 1;
+        -webkit-flex: 1;
+        color: #fff;
+        font-size: 15px;
+        position: relative;
+    }
+
+    .bar > span:after {
+        position: absolute;
+        height: 100%;
+        width: 1px;
+        background-color: #a9a9a9;
+        content: '';
+        right: 0;
+        top: 0;
+    }
+    .bar > span:last-child:after {
+        display: none;
+    }
+    .bar > span > i {
+        height: 15px;
+        display: block;
+        line-height: 25px;
+    }
+</style>
+
+<h2>表格遮罩层</h2>
+
+<div class="container">
+    <table class="table" id="mytable">
+        <tr class="active">
+            <th>姓名</th>
+            <th>性别</th>
+            <th>毕业学校</th>
+            <th>专业</th>
+        </tr>
+        <tr data-id="1" data-group="0">
+            <td class="box">
+                <input type="text" style="border: none;width: 50%" value="彭于晏"/>
+                <div class="bar">
+                    <span onclick="myPage.editTd(this);">修改</span>
+                    <span>
+                        <i class="iconfont icon-jiantoushang" onclick="myPage.moveTr(this, 'up');"></i>
+                        <i class="iconfont icon-jiantouxia" onclick="myPage.moveTr(this, 'down');"></i>
+                    </span>
+                </div>
+            </td>
+            <td>男</td>
+            <td>台北大学</td>
+            <td>111111111111111111</td>
+        </tr>
+        <tr data-id="0" data-group="0">
+            <td>阮经天</td>
+            <td>男</td>
+            <td>台南大学</td>
+            <td>222222222222222222222</td>
+        </tr>
+        <tr data-id="1" data-group="1">
+            <td class="box">
+                <input type="text" style="border: none;width: 50%" value="赵又廷" />
+                <div class="bar">
+                    <span onclick="myPage.editTd(this);">修改</span>
+                    <span>
+                        <i class="iconfont icon-jiantoushang" onclick="myPage.moveTr(this, 'up');"></i>
+                        <i class="iconfont icon-jiantouxia" onclick="myPage.moveTr(this, 'down');"></i>
+                    </span>
+                </div>
+            </td>
+            <td>男</td>
+            <td>台东大学</td>
+            <td>333333333333333333333333</td>
+        </tr>
+        <tr data-id="0" data-group="1">
+            <td>黄立行</td>
+            <td>男</td>
+            <td>台北大学</td>
+            <td>444444444444444444444444444</td>
+        </tr>
+    </table>
+</div>
+<script>
+    var myPage = {
+        moveTr: function(ngy, action) {
+            var thisTr = $(ngy).closest('tr'); //获取到触发的tr
+
+            if(action == "up"){    //向上移动
+                if ($(thisTr).prev().attr('class') == "active") { //获取tr的前一个相同等级的元素是否为空
+                    alert("不能往上移了!");
+                    return;
+                }
+                var prevs = $(thisTr).prevAll('[data-id=1]');//查找之前的所有满足条件的兄弟元素
+                var prevTr = prevs[prevs.length - 1];//最后一个兄弟元素
+                $('tr[data-group=' + thisTr.data("group") + ']').insertBefore(prevTr); //将本身插入到目标tr的前面
+            } else {
+                //if ($(thisTr).next().next().html() == null) {
+                //    alert("不能往下移了!");
+                //    return;
+                //}
+
+                //$('tr[data-group=' + thisTr.data("group") + ']').insertAfter($(thisTr).next()); //将本身插入到目标tr的后面
+            }
+        },
+        editTd: function (ngy) {
+            var $inp = $(ngy).closest('td').find('input');
+            var content = $inp.val();
+            $inp.val("").focus().val(content);
+        }
+    }
+</script>
