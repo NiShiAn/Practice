@@ -45,6 +45,7 @@ namespace Test.Controllers
         {
             try
             {
+                var tour = GetTourList();
                 var list = GetSpotList();
 
                 var colums1 = new Dictionary<string, string>()
@@ -70,6 +71,13 @@ namespace Test.Controllers
                     { "数量", "SpotQuantity"},
                     { "减免", "FreeQuantity"},
                 };
+                var colums3 = new Dictionary<string, string>()
+                {
+                    { "团队ID", "TourNo"},
+                    { "团队日期", "TourDate"},
+                    { "团队人数", "PeopleNumber"}
+                };
+
                 MemoryStream stream;
                 switch (type)
                 {
@@ -84,13 +92,21 @@ namespace Test.Controllers
                         };
                         stream = exportManager.ExportExcelBatchDataTable(tupleList1, true);
                         break;
-                    default:
+                    case 3:
                         var tupleList2 = new List<Tuple<string, Dictionary<string, string>, DataTable>>()
                         {
                             new Tuple<string, Dictionary<string, string>, DataTable>("精神可嘉", colums1, ToDataTable(list)),
                             new Tuple<string, Dictionary<string, string>, DataTable>("不错de", colums2, ToDataTable(list)),
                         };
                         stream = exportManager.ExportExcelBatchDataTable(tupleList2, true);
+                        break;
+                    default:
+                        var tupleList3 = new List<Tuple<string, Dictionary<string, string>, DataTable>>()
+                        {
+                            new Tuple<string, Dictionary<string, string>, DataTable>("团队信息", colums3, ToDataTable(tour)),
+                            new Tuple<string, Dictionary<string, string>, DataTable>("景点信息", colums2, ToDataTable(list)),
+                        };
+                        stream = exportManager.ExportExcelBlockData("颠倒日月", tupleList3, true);
                         break;
                 }
 
@@ -102,6 +118,22 @@ namespace Test.Controllers
             }
         }
 
+        private List<TourInfo> GetTourList()
+        {
+            var list = new List<TourInfo>
+            {
+                new TourInfo()
+                {
+                    TourNo = "TMS20170802S001",
+                    TourId = "1708051001",
+                    TourName = "HDA-U_0805_020301",
+                    TourDate = Convert.ToDateTime("2017-10-25"),
+                    PeopleNumber = 5
+                }
+            };
+
+            return list;
+        } 
         private List<SpotInfo> GetSpotList()
         {
             var list = new List<SpotInfo>();

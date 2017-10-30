@@ -26,5 +26,14 @@ namespace Test.COM
         /// <param name="isWidth">列宽自适应(谨慎,字数少的可用)</param>
         /// <returns></returns>
         MemoryStream ExportExcelBatchDataTable(List<Tuple<string, Dictionary<string, string>, DataTable>> tupleList, bool isWidth = false);
+
+        /// <summary>
+        /// 块状数据批量导出Excel
+        /// </summary>
+        /// <param name="sheetName">Sheet名</param>
+        /// <param name="tupleList">标题名, key:列名-Value:字段名, 数据源</param>
+        /// <param name="isWidth">列宽自适应(谨慎,字数少的可用)</param>
+        /// <returns></returns>
+        MemoryStream ExportExcelBlockData(string sheetName, List<Tuple<string, Dictionary<string, string>, DataTable>> tupleList, bool isWidth = false);
     }
 }
