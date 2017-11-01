@@ -2,9 +2,7 @@
 using System.Collections.Generic;
 using System.Data;
 using System.IO;
-using System.Linq;
 using System.Reflection;
-using System.Web;
 using System.Web.Mvc;
 using Test.COM;
 using Test.COM.Entity;
@@ -14,7 +12,7 @@ namespace Test.Controllers
     public class HomeController : Controller
     {
         private IExportManager exportManager = new ExportManager();
-        // GET: Home
+        #region 功能页面
         public ActionResult Index()
         {
             return View();
@@ -40,7 +38,14 @@ namespace Test.Controllers
 
             return View(GetSpotList());
         }
+        #endregion
 
+        #region 页面回调
+        /// <summary>
+        /// 导出表格
+        /// </summary>
+        /// <param name="type"></param>
+        /// <returns></returns>
         public ActionResult ExportTable(int type)
         {
             try
@@ -77,7 +82,6 @@ namespace Test.Controllers
                     { "团队日期", "TourDate"},
                     { "团队人数", "PeopleNumber"}
                 };
-
                 MemoryStream stream;
                 switch (type)
                 {
@@ -117,7 +121,75 @@ namespace Test.Controllers
                 throw ex;
             }
         }
+        /// <summary>
+        /// 导出文档
+        /// </summary>
+        /// <param name="type"></param>
+        /// <returns></returns>
+        public ActionResult ExportWord(int type)
+        {
+            try
+            {
+                var colums1 = new Dictionary<string, string>()
+                {
+                    { "Name", "麦兜兜"},
+                    { "Sex", "孩子不分性别"},
+                    { "Nation", "猪猪"},
+                    { "Address", "山东省青岛市李沧区"},
+                    { "Phone", "不告诉你" }
+                };
+                var colums2 = new Dictionary<string, string>()
+                {
+                    { "Name", "上海一日游"},
+                    { "Number", "TMS20170802S001"},
+                    { "Destination", "杭州西湖日月潭"},
+                };
+                var colums3 = new Dictionary<string, string>()
+                {
+                    { "TourName", "团队名称"},
+                    { "SpotName", "景点名称"},
+                    { "TicketName", "票种"},
+                    { "TourDate", "时间"},
+                    { "UnitPrice", "单价"},
+                    { "SpotQuantity", "数量"},
+                    { "FreeQuantity", "减免"},
+                    { "TotalAmount", "总金额"}
+                };
+                var colums4 = new Dictionary<string, string>()
+                {
+                    { "TourNo", "团队ID"},
+                    { "TourDate", "团队日期"},
+                    { "PeopleNumber", "团队人数"}
+                };
 
+                //是否为表格
+                var tupleList1 = new List<Tuple<string, Dictionary<string, string>, DataTable>>()
+                {
+                    new Tuple<string, Dictionary<string, string>, DataTable>("景点信息", colums3, ToDataTable(GetSpotList())),
+                    new Tuple<string, Dictionary<string, string>, DataTable>("游客信息", colums4, ToDataTable(GetTourList())),
+                };
+
+                MemoryStream stream;
+                switch (type)
+                {
+                    case 1:
+                        stream = exportManager.ExportWordTemplate(Server.MapPath("~/Temple/个人信息.docx"), colums1);
+                        break;
+                    default:
+                        stream = exportManager.ExportWordCreateTable(Server.MapPath("~/Temple/景点信息.docx"), colums2, tupleList1);
+                        break;
+                }
+
+                return File(stream, "application/msword", "麦兜兜(" + DateTime.Now.ToString("yyyy-MM-dd") + ").docx");
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+        #endregion
+
+        #region 私有
         private List<TourInfo> GetTourList()
         {
             var list = new List<TourInfo>
@@ -203,6 +275,7 @@ namespace Test.Controllers
             }
             return t;
         }
+        #endregion
         #endregion
     }
 }

@@ -8,6 +8,9 @@
 <div class="container">
     <div class="form-inline">
         <div class="form-group">
+            <label>Excel:</label>
+        </div>
+        <div class="form-group">
             <button class="btn btn-primary" onclick="exportExcel(1);">List导出</button>
         </div>
         <div class="form-group">
@@ -18,6 +21,15 @@
         </div>
         <div class="form-group">
             <button class="btn btn-primary" onclick="exportExcel(4);">块级数据导出</button>
+        </div>
+    </div><br/>
+    <div class="form-inline">
+        <div class="form-group">
+            <label>Word:</label>
+        </div>
+        <div class="form-group">
+            <button class="btn btn-primary" onclick="exportWord(1);">模板变量</button>
+            <button class="btn btn-primary" onclick="exportWord(2);">动态表格</button>
         </div>
     </div>
     <hr/>
@@ -53,5 +65,8 @@
 <script>
     function exportExcel(type) {
         window.location = "/Home/ExportTable?type=" + type;
+    }
+    function exportWord(type) {
+        window.location = "/Home/ExportWord?type=" + type;
     }
 </script>

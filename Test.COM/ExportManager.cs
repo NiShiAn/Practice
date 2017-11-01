@@ -5,14 +5,17 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using NPOI.HSSF.Util;
+using NPOI.OpenXmlFormats.Wordprocessing;
 using NPOI.SS.UserModel;
 using NPOI.SS.Util;
 using NPOI.XSSF.UserModel;
+using NPOI.XWPF.UserModel;
 
 namespace Test.COM
 {
     public class ExportManager : IExportManager
     {
+        #region Excel
         private class NpoiMemoryStream : MemoryStream
         {
             public NpoiMemoryStream()
@@ -38,7 +41,7 @@ namespace Test.COM
         {
             var workbook = new XSSFWorkbook();
             //添加Sheet
-            workbook = AddSheetForList(workbook, tuple, isWidth);
+            AddSheetForList(workbook, tuple, isWidth);
 
             var ms = new NpoiMemoryStream { AllowClose = false };
             workbook.Write(ms);
@@ -58,7 +61,10 @@ namespace Test.COM
         {
             var workbook = new XSSFWorkbook();
             //添加Sheet
-            workbook = tupleList.Aggregate(workbook, (current, t) => AddSheetForDataTable(current, t, isWidth));
+            foreach (var tuple in tupleList)
+            {
+                AddSheetForDataTable(workbook, tuple, isWidth);
+            }
 
             var ms = new NpoiMemoryStream { AllowClose = false };
             workbook.Write(ms);
@@ -176,7 +182,7 @@ namespace Test.COM
         /// WorkBook添加Sheet
         /// 数据源List
         /// </summary>
-        protected virtual XSSFWorkbook AddSheetForList<T>(XSSFWorkbook workbook, Tuple<string, Dictionary<string, string>, List<T>> tuple, bool isWidth)
+        protected virtual void AddSheetForList<T>(XSSFWorkbook workbook, Tuple<string, Dictionary<string, string>, List<T>> tuple, bool isWidth)
         {
             
             //创建工作簿
@@ -284,14 +290,12 @@ namespace Test.COM
                     sheet.SetColumnWidth(columnNum, columnWidth * 256);
                 }
             }
-
-            return workbook;
         }
         /// <summary>
         /// WorkBook添加Sheet
         /// 数据源DataTable
         /// </summary>
-        protected virtual XSSFWorkbook AddSheetForDataTable(XSSFWorkbook workbook, Tuple<string, Dictionary<string, string>, DataTable> tuple, bool isWidth)
+        protected virtual void AddSheetForDataTable(XSSFWorkbook workbook, Tuple<string, Dictionary<string, string>, DataTable> tuple, bool isWidth)
         {
             //创建工作簿
             var sheet = workbook.CreateSheet(tuple.Item1);
@@ -367,8 +371,142 @@ namespace Test.COM
                     sheet.SetColumnWidth(columnNum, columnWidth * 256);
                 }
             }
-
-            return workbook;
         }
+        #endregion
+
+        #region Word
+        /// <summary>
+        /// 导出Word模板
+        /// 仅替换文档变量
+        /// </summary>
+        /// <param name="path">文档路径</param>
+        /// <param name="dics">变量信息：key:变量名-value:变量值</param>
+        /// <returns></returns>
+        public MemoryStream ExportWordTemplate(string path, Dictionary<string, string> dics)
+        {
+            var document = new XWPFDocument(File.OpenRead(path));
+
+            //变量替换
+            DocReplaceVariable(document, dics);
+
+            var ms = new NpoiMemoryStream { AllowClose = false };
+            document.Write(ms);
+            ms.Flush();
+            ms.Seek(0, SeekOrigin.Begin);
+            ms.AllowClose = true;
+            return ms;
+
+        }
+        /// <summary>
+        /// 导出Word模板
+        /// 替换文档变量和表格数据
+        /// </summary>
+        /// <param name="path">文档路径</param>
+        /// <param name="dics">变量信息：key:变量名-value:变量值</param>
+        /// <param name="tuples">表格信息：表头, key:字段名-value:列名, 数据源</param>
+        /// <returns></returns>
+        public MemoryStream ExportWordCreateTable(string path, Dictionary<string, string> dics, List<Tuple<string, Dictionary<string, string>, DataTable>> tuples)
+        {
+            var document = new XWPFDocument(File.OpenRead(path));
+
+            //变量替换
+            if (dics != null && dics.Any())
+            {
+                DocReplaceVariable(document, dics);
+            }
+            //添加表格
+            if (tuples != null && tuples.Any())
+            {
+                foreach (var tuple in tuples)
+                {
+                    DocAddTable(document, tuple.Item1, tuple.Item2, tuple.Item3);
+                }
+            }
+
+            var ms = new NpoiMemoryStream { AllowClose = false };
+            document.Write(ms);
+            ms.Flush();
+            ms.Seek(0, SeekOrigin.Begin);
+            ms.AllowClose = true;
+            return ms;
+        }
+        /// <summary>
+        /// 文档替换变量
+        /// </summary>
+        /// <param name="doc">文档</param>
+        /// <param name="dics">变量信息：key:变量名-value:变量值</param>
+        protected virtual void DocReplaceVariable(XWPFDocument doc, Dictionary<string, string> dics)
+        {
+            //段落变量替换
+            foreach (var paragraph in doc.Paragraphs)
+            {
+                foreach (var item in dics)
+                {
+                    if (!paragraph.Text.Contains("${" + item.Key + "}"))
+                        continue;
+
+                    paragraph.ReplaceText("${" + item.Key + "}", item.Value);
+                }
+            }
+            //表格变量替换
+            foreach (var table in doc.Tables)
+            {
+                foreach (var row in table.Rows)
+                {
+                    foreach (var cell in row.GetTableCells())
+                    {
+                        foreach (var paragraph in cell.Paragraphs)
+                        {
+                            foreach (var item in dics)
+                            {
+                                if (!paragraph.Text.Contains("${" + item.Key + "}"))
+                                    continue;
+
+                                paragraph.ReplaceText("${" + item.Key + "}", item.Value);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        /// <summary>
+        /// 文档添加Table
+        /// </summary>
+        /// <param name="doc">文档</param>
+        /// <param name="title">表头</param>
+        /// <param name="dics">标列信息：key:字段名-value:列名</param>
+        /// <param name="dt">数据源</param>
+        protected virtual void DocAddTable(XWPFDocument doc, string title, Dictionary<string, string> dics, DataTable dt)
+        {
+            var rowCount = dt.Rows.Count;
+            var colCount = dics.Count;
+            //创建表格
+            var table = doc.CreateTable(1, 1);
+            //表头
+            var tCell = table.GetRow(0).GetCell(0);
+            var tCtt = tCell.GetCTTc();
+            CT_TcPr ctPr = tCtt.AddNewTcPr();
+            ctPr.gridSpan = new CT_DecimalNumber { val = colCount.ToString() };//合并列
+            tCtt.GetPList()[0].AddNewPPr().AddNewJc().val = ST_Jc.center;
+            var tCpr = tCell.Paragraphs[0].CreateRun();
+            tCpr.IsBold = true;
+            tCpr.SetText(title);
+            //填充内容
+            for (int n = 0; n < rowCount + 1; n++)
+            {
+                var tr = table.CreateRow();//创建行时默认创建一个单元格
+                //标题
+                for (int g = 0; g < colCount; g++)
+                {
+                    var dic = dics.ElementAt(g);
+                    var text = n == 0 ? dic.Value : dt.Rows[n - 1][dic.Key].ToString();
+                    var td = g == 0 ? tr.GetCell(0) : tr.CreateCell();
+
+                    td.SetText(text);
+                }
+            }
+            doc.CreateParagraph();//回车
+        }
+        #endregion
     }
 }

@@ -10,6 +10,7 @@ namespace Test.COM
 {
     public interface IExportManager
     {
+        #region
         /// <summary>
         /// List导出Excel
         /// </summary>
@@ -35,5 +36,27 @@ namespace Test.COM
         /// <param name="isWidth">列宽自适应(谨慎,字数少的可用)</param>
         /// <returns></returns>
         MemoryStream ExportExcelBlockData(string sheetName, List<Tuple<string, Dictionary<string, string>, DataTable>> tupleList, bool isWidth = false);
+        #endregion
+
+        #region
+        /// <summary>
+        /// 导出Word模板
+        /// 仅替换文档变量
+        /// </summary>
+        /// <param name="path">文档路径</param>
+        /// <param name="dics">变量信息：key:变量名-value:变量值</param>
+        /// <returns></returns>
+        MemoryStream ExportWordTemplate(string path, Dictionary<string, string> dics);
+        /// <summary>
+        /// 导出Word模板
+        /// 替换文档变量和表格数据
+        /// </summary>
+        /// <param name="path">文档路径</param>
+        /// <param name="dics">变量信息：key:变量名-value:变量值</param>
+        /// <param name="tuples">表格信息：表头, key:字段名-value:列名, 数据源</param>
+        /// <returns></returns>
+        MemoryStream ExportWordCreateTable(string path, Dictionary<string, string> dics, List<Tuple<string, Dictionary<string, string>, DataTable>> tuples);
+
+        #endregion
     }
 }
