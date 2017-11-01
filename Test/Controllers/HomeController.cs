@@ -140,7 +140,7 @@ namespace Test.Controllers
                 };
                 var colums2 = new Dictionary<string, string>()
                 {
-                    { "Name", "上海一日游"},
+                    { "TourName", "上海一日游"},
                     { "Number", "TMS20170802S001"},
                     { "Destination", "杭州西湖日月潭"},
                 };

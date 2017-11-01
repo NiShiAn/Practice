@@ -482,6 +482,7 @@ namespace Test.COM
             var colCount = dics.Count;
             //创建表格
             var table = doc.CreateTable(1, 1);
+            table.Width = 4900;
             //表头
             var tCell = table.GetRow(0).GetCell(0);
             var tCtt = tCell.GetCTTc();
