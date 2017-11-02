@@ -399,7 +399,7 @@ namespace Test.COM
         }
         /// <summary>
         /// 导出Word模板
-        /// 替换文档变量和表格数据
+        /// 替换文档变量和添加表格
         /// </summary>
         /// <param name="path">文档路径</param>
         /// <param name="dics">变量信息：key:变量名-value:变量值</param>
@@ -420,6 +420,44 @@ namespace Test.COM
                 foreach (var tuple in tuples)
                 {
                     DocAddTable(document, tuple.Item1, tuple.Item2, tuple.Item3);
+                }
+            }
+
+            var ms = new NpoiMemoryStream { AllowClose = false };
+            document.Write(ms);
+            ms.Flush();
+            ms.Seek(0, SeekOrigin.Begin);
+            ms.AllowClose = true;
+            return ms;
+        }
+        /// <summary>
+        /// 导出Word模板
+        /// 替换文档变量和填充表格
+        /// </summary>
+        /// <param name="path">文档路径</param>
+        /// <param name="dics">变量信息：key:变量名-value:变量值</param>
+        /// <param name="tuples">表格信息：表格序号(从1开始), 字段名, 数据源</param>
+        /// <returns></returns>
+        public MemoryStream ExportWordExtendTable(string path, Dictionary<string, string> dics, List<Tuple<int, string[], DataTable>> tuples)
+        {
+            var document = new XWPFDocument(File.OpenRead(path));
+
+            //变量替换
+            if (dics != null && dics.Any())
+            {
+                DocReplaceVariable(document, dics);
+            }
+            //扩展表格
+            if (tuples != null && tuples.Any())
+            {
+                var tabCount = document.Tables.Count;
+                foreach (var tuple in tuples)
+                {
+                    if (tuple.Item1 <= tabCount)
+                    {
+                        var table = document.Tables[tuple.Item1 - 1];
+                        DocTableAddTr(table, tuple.Item2, tuple.Item3);
+                    }
                 }
             }
 
@@ -500,13 +538,33 @@ namespace Test.COM
                 for (int g = 0; g < colCount; g++)
                 {
                     var dic = dics.ElementAt(g);
-                    var text = n == 0 ? dic.Value : dt.Rows[n - 1][dic.Key].ToString();
+                    var text = n == 0 ? dic.Value : dic.Key == "Null" ? "" : dt.Rows[n - 1][dic.Key].ToString();//Null,不展示数据
                     var td = g == 0 ? tr.GetCell(0) : tr.CreateCell();
 
                     td.SetText(text);
                 }
             }
             doc.CreateParagraph();//回车
+        }
+        /// <summary>
+        /// Table添加Row
+        /// </summary>
+        /// <param name="table">表格</param>
+        /// <param name="columns">字段名</param>
+        /// <param name="dt">数据源</param>
+        protected virtual void DocTableAddTr(XWPFTable table, string[] columns, DataTable dt)
+        {
+            foreach (DataRow dr in dt.Rows)
+            {
+                var ntr = table.CreateRow();
+
+                for (int i = 0; i < columns.Length; i++)
+                {
+                    var text = dr[columns[i]].ToString();
+                    var td = i == 0 ? ntr.GetCell(0) : ntr.CreateCell();
+                    td.SetText(text);
+                }
+            }
         }
         #endregion
     }

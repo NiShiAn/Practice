@@ -10,7 +10,7 @@ namespace Test.COM
 {
     public interface IExportManager
     {
-        #region
+        #region Excel
         /// <summary>
         /// List导出Excel
         /// </summary>
@@ -38,7 +38,7 @@ namespace Test.COM
         MemoryStream ExportExcelBlockData(string sheetName, List<Tuple<string, Dictionary<string, string>, DataTable>> tupleList, bool isWidth = false);
         #endregion
 
-        #region
+        #region Word(需要NPOI版本2.3)
         /// <summary>
         /// 导出Word模板
         /// 仅替换文档变量
@@ -49,13 +49,22 @@ namespace Test.COM
         MemoryStream ExportWordTemplate(string path, Dictionary<string, string> dics);
         /// <summary>
         /// 导出Word模板
-        /// 替换文档变量和表格数据
+        /// 替换文档变量和添加表格
         /// </summary>
         /// <param name="path">文档路径</param>
         /// <param name="dics">变量信息：key:变量名-value:变量值</param>
         /// <param name="tuples">表格信息：表头, key:字段名-value:列名, 数据源</param>
         /// <returns></returns>
         MemoryStream ExportWordCreateTable(string path, Dictionary<string, string> dics, List<Tuple<string, Dictionary<string, string>, DataTable>> tuples);
+        /// <summary>
+        /// 导出Word模板
+        /// 替换文档变量和填充表格
+        /// </summary>
+        /// <param name="path">文档路径</param>
+        /// <param name="dics">变量信息：key:变量名-value:变量值</param>
+        /// <param name="tuples">表格信息：表格序号(从1开始), 字段名, 数据源</param>
+        /// <returns></returns>
+        MemoryStream ExportWordExtendTable(string path, Dictionary<string, string> dics, List<Tuple<int, string[], DataTable>> tuples);
 
         #endregion
     }

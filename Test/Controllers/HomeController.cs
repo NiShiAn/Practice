@@ -161,22 +161,41 @@ namespace Test.Controllers
                     { "TourDate", "团队日期"},
                     { "PeopleNumber", "团队人数"}
                 };
-
+                var colums5 = new Dictionary<string, string>()
+                {
+                    { "CompanyName", "江南皮革厂" },
+                    { "ContactTel", "1312121111" },
+                    { "DepartureDate", "6月10" },
+                    { "People", "10人" },
+                    { "Car", "5号法拉利" },
+                    { "Guid", "大护法" },
+                };
+                var colums6 = new[]
+                {
+                    "Day",
+                    "Content"
+                };
                 //是否为表格
                 var tupleList1 = new List<Tuple<string, Dictionary<string, string>, DataTable>>()
                 {
                     new Tuple<string, Dictionary<string, string>, DataTable>("景点信息", colums3, ToDataTable(GetSpotList())),
                     new Tuple<string, Dictionary<string, string>, DataTable>("游客信息", colums4, ToDataTable(GetTourList())),
                 };
-
+                var tupleList2 = new List<Tuple<int, string[], DataTable>>()
+                {
+                    new Tuple<int, string[], DataTable>(2, colums6, ToDataTable(GetTourPlan())),
+                };
                 MemoryStream stream;
                 switch (type)
                 {
                     case 1:
                         stream = exportManager.ExportWordTemplate(Server.MapPath("~/Temple/个人信息.docx"), colums1);
                         break;
-                    default:
+                    case 2:
                         stream = exportManager.ExportWordCreateTable(Server.MapPath("~/Temple/景点信息.docx"), colums2, tupleList1);
+                        break;
+                    default:
+                        stream = exportManager.ExportWordExtendTable(Server.MapPath("~/Temple/出游计划.docx"), colums5, tupleList2);
                         break;
                 }
 
@@ -232,6 +251,23 @@ namespace Test.Controllers
             return list;
         }
 
+        private List<TourPlan> GetTourPlan()
+        {
+            var list = new List<TourPlan>();
+
+            for (var i = 0; i < 3; i++)
+            {
+                list.Add(new TourPlan()
+                {
+                    Day = i,
+                    Content = "吃饭睡觉打豆豆",
+                    Mins = (decimal)0.5 + i,
+                    Remark = "无所事事的活着"
+                });
+            }
+
+            return list;
+        } 
         #region List转成DataTable
         private DataTable ToDataTable<T>(List<T> items)
         {
