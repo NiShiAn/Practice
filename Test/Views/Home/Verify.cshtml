@@ -55,14 +55,33 @@
                         reg = /^[1-9]\d{3}-(0[1-9]|1[0-2])-(0[1-9]|[1-2][0-9]|3[0-1])$/;
                         break;
                     case 2:
-                        reg = /^([1-9]|1[0-2]|0[1-9]):([0-5]\d|\d)\s(AM|PM|am|pm)$/;
+                        reg = /^([1-9]|1[0-2]|0[1-9]):([0-5]\d|\d)(|\s)(AM|PM|am|pm)$/;
                 }
                 if (!reg.test($(this).val().trim())) {
                     $(this).next().text("输入格式错误");
                 } else {
-                    $(this).next().text("");
+                    if (index == 2) {
+                        $(this).next().text(pageJs.Amend());
+                    } else {
+                        $(this).next().text("");
+                    }
                 }
             });
+        },
+        Amend: function() {
+            var txt = $("#mainf").find('input').eq(2).val().trim().toUpperCase();
+            
+            if (txt.indexOf(' ') < 0) {
+                var aindex = txt.indexOf('A');
+                var pindex = txt.indexOf('P');
+                if (aindex > 0) {
+                    txt = txt.replace('A', ' A');
+                }
+                if (pindex > 0) {
+                    txt = txt.replace('P', ' P');
+                }
+            }
+            return txt;
         }
     }
 </script>
