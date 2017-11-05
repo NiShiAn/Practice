@@ -554,36 +554,25 @@ namespace Test.COM
         /// <param name="dt">数据源</param>
         protected virtual void DocTableAddTr(XWPFTable table, string[] columns, DataTable dt)
         {
+            var lctr = table.Rows[table.Rows.Count - 1].GetCTRow();
             foreach (DataRow dr in dt.Rows)
             {
-                var ntr = table.CreateRow();
-
+                var nctr = new CT_Row();
                 for (int i = 0; i < columns.Length; i++)
                 {
                     var text = dr[columns[i]].ToString();
-                    var td = i == 0 ? ntr.GetCell(0) : ntr.CreateCell();
-                    td.SetText(text);
+
+                    var lctcpr = lctr.GetTcArray(i).tcPr;
+                    var nctct = nctr.AddNewTc();
+                    if (lctcpr.gridSpan != null)
+                    {
+                        nctct.AddNewTcPr().AddNewGridspan().val = lctcpr.gridSpan.val;
+                    }
+                    
+                    nctct.AddNewP().AddNewR().AddNewT().Value = text;
                 }
+                table.AddRow(new XWPFTableRow(nctr, table));
             }
-            //var lctr = table.Rows[table.Rows.Count - 1].GetCTRow();
-            //foreach (DataRow dr in dt.Rows)
-            //{
-            //    var nctr = new CT_Row();
-            //    for (int i = 0; i < columns.Length; i++)
-            //    {
-            //        var text = dr[columns[i]].ToString();
-
-            //        var lctcpr = lctr.GetTcArray(i).tcPr;
-            //        var nctct = nctr.AddNewTc();
-            //        if (lctcpr.gridSpan != null)
-            //        {
-            //            nctct.AddNewTcPr().gridSpan.val = lctcpr.gridSpan.val;
-            //        }
-
-            //        nctct.GetPList()[0].AddNewR().AddNewT().Value = text;
-            //    }
-            //    table.AddRow(new XWPFTableRow(nctr, table));
-            //}
         }
         #endregion
     }

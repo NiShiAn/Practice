@@ -183,7 +183,7 @@ namespace Test.Controllers
                 };
                 var tupleList2 = new List<Tuple<int, string[], DataTable>>()
                 {
-                    new Tuple<int, string[], DataTable>(2, colums6, ToDataTable(GetTourPlan())),
+                    new Tuple<int, string[], DataTable>(1, colums6, ToDataTable(GetTourPlan())),
                 };
                 MemoryStream stream;
                 switch (type)
