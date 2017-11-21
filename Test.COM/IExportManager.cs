@@ -10,7 +10,7 @@ namespace Test.COM
 {
     public interface IExportManager
     {
-        #region Excel
+        #region 导出Excel
         /// <summary>
         /// List导出Excel
         /// </summary>
@@ -38,7 +38,7 @@ namespace Test.COM
         MemoryStream ExportExcelBlockData(string sheetName, List<Tuple<string, Dictionary<string, string>, DataTable>> tupleList, bool isWidth = false);
         #endregion
 
-        #region Word(需要NPOI版本2.3)
+        #region 导入Word(需要NPOI版本2.3)
         /// <summary>
         /// 导出Word模板
         /// 仅替换文档变量
@@ -65,6 +65,18 @@ namespace Test.COM
         /// <param name="tuples">表格信息：表格序号(从1开始), 字段名, 数据源</param>
         /// <returns></returns>
         MemoryStream ExportWordExtendTable(string path, Dictionary<string, string> dics, List<Tuple<int, string[], DataTable>> tuples);
+
+        #endregion
+
+        #region 导入Excel
+        /// <summary>
+        /// Excel转化为DataSet
+        /// </summary>
+        /// <param name="isFirstColumn">是否首行为列名</param>
+        /// <param name="stream">文件流</param>
+        /// <param name="fileName">文件名</param>
+        /// <returns></returns>
+        DataSet ExcelToDataTableByStream(bool isFirstColumn, Stream stream, string fileName);
 
         #endregion
     }

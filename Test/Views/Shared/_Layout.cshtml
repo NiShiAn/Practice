@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@ViewBag.Title - My ASP.NET Application</title>
+    <title>@ViewBag.Title</title>
     <link href="~/Content/Site.css" rel="stylesheet" type="text/css" />
     <link href="~/Content/bootstrap.min.css" rel="stylesheet" type="text/css"/>
     <link rel="stylesheet" type="text/css" href="/Content/iconfont.css">
@@ -23,6 +23,8 @@
                 @Html.ActionLink("表格遮罩", "Table", "Home", new { area = "" }, new { @class = "navbar-brand" })
                 @Html.ActionLink("正则验证", "Verify", "Home", new { area = "" }, new { @class = "navbar-brand" })
                 @Html.ActionLink("文件导出", "Export", "Home", new { area = "" }, new { @class = "navbar-brand" })
+                @Html.ActionLink("文件导入", "Import", "Home", new { area = "" }, new { @class = "navbar-brand" })
+                @Html.ActionLink("行内列表", "Row", "Home", new { area = "" }, new { @class = "navbar-brand" })
             </div>
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
@@ -39,7 +41,8 @@
         </footer>
     </div>
 
-    <script src="~/Scripts/jquery-1.10.2.min.js"></script>
+    <script src="~/Scripts/jquery-3.2.1.min.js"></script>
     <script src="~/Scripts/bootstrap.min.js"></script>
+    <script src="~/Scripts/jquery.form.js"></script>
 </body>
 </html>

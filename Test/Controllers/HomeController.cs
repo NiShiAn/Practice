@@ -2,8 +2,11 @@
 using System.Collections.Generic;
 using System.Data;
 using System.IO;
+using System.Linq;
 using System.Reflection;
+using System.Web;
 using System.Web.Mvc;
+using Newtonsoft.Json;
 using Test.COM;
 using Test.COM.Entity;
 
@@ -37,6 +40,16 @@ namespace Test.Controllers
         {
 
             return View(GetSpotList());
+        }
+
+        public ActionResult Row()
+        {
+            return View();
+        }
+
+        public ActionResult Import()
+        {
+            return View();
         }
         #endregion
 
@@ -205,6 +218,62 @@ namespace Test.Controllers
             {
                 throw ex;
             }
+        }
+        /// <summary>
+        /// 导入采购任务下单数据
+        /// RenYongQiang 2017/02/23
+        /// </summary>
+        [HttpPost]
+        public ActionResult ImportExcel(HttpPostedFileBase myfile)
+        {
+            var errors = new List<string>();
+            try
+            {
+                if (string.IsNullOrWhiteSpace(myfile?.FileName))
+                {
+                    errors.Add("失败,未获取到文件！");
+                    return Json(JsonConvert.SerializeObject(errors), JsonRequestBehavior.AllowGet);
+                }
+                var fileName = myfile.FileName;
+
+                if (!fileName.EndsWith(".xls") && !fileName.EndsWith(".xlsx"))
+                {
+                    errors.Add("失败,仅能上传.xls或.xlsx文件的格式！");
+                    return Json(JsonConvert.SerializeObject(errors), JsonRequestBehavior.AllowGet);
+                }
+
+                if (myfile.ContentLength / (1024 * 1024) > 10) //大于10M
+                {
+                    errors.Add("失败,文件容量大于10M！");
+                    return Json(JsonConvert.SerializeObject(errors), JsonRequestBehavior.AllowGet);
+                }
+
+                var ds = exportManager.ExcelToDataTableByStream(true, myfile.InputStream, fileName);
+
+                if (ds == null || ds.Tables.Count <= 0 || ds.Tables[0].Rows.Count == 0)
+                {
+                    errors.Add("失败,文件内没有内容！");
+                    return Json(JsonConvert.SerializeObject(errors), JsonRequestBehavior.AllowGet);
+                }
+                var dt = ds.Tables[0];
+                //验证列是否存在
+                var colums = "队员,号码,位置,年级,绰号";
+                errors.AddRange(from msg in colums.Split(',') where dt.Columns[msg] == null select $"该导入的文件中没有\"{msg}\"这一列！");
+                if (errors.Count > 0)
+                {
+                    return Json(JsonConvert.SerializeObject(errors), JsonRequestBehavior.AllowGet);
+                }
+                //过滤空白行
+                dt = dt.AsEnumerable().Where(x => !string.IsNullOrEmpty(x.Field<string>("队员"))).CopyToDataTable();
+
+                return Json(JsonConvert.SerializeObject(dt), JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                errors.Add("导入错误，" + ex.Message);
+            }
+
+            return Json(JsonConvert.SerializeObject(errors), JsonRequestBehavior.AllowGet);
         }
         #endregion
 

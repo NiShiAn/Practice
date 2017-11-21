@@ -4,6 +4,7 @@ using System.Data;
 using System.IO;
 using System.Linq;
 using System.Text;
+using NPOI.HSSF.UserModel;
 using NPOI.HSSF.Util;
 using NPOI.OpenXmlFormats.Wordprocessing;
 using NPOI.SS.UserModel;
@@ -15,7 +16,7 @@ namespace Test.COM
 {
     public class ExportManager : IExportManager
     {
-        #region Excel
+        #region 导出Excel
         private class NpoiMemoryStream : MemoryStream
         {
             public NpoiMemoryStream()
@@ -23,7 +24,7 @@ namespace Test.COM
                 AllowClose = true;
             }
 
-            public bool AllowClose { get; set; }
+            public bool AllowClose { private get; set; }
 
             public override void Close()
             {
@@ -374,7 +375,7 @@ namespace Test.COM
         }
         #endregion
 
-        #region Word
+        #region 导出Word(需要NPOI版本2.3)
         /// <summary>
         /// 导出Word模板
         /// 仅替换文档变量
@@ -573,6 +574,76 @@ namespace Test.COM
                 }
                 table.AddRow(new XWPFTableRow(nctr, table));
             }
+        }
+        #endregion
+
+        #region 导入Excel
+        /// <summary>
+        /// Excel转化为DataSet
+        /// </summary>
+        /// <param name="isFirstColumn">是否首行为列名</param>
+        /// <param name="stream">文件流</param>
+        /// <param name="fileName">文件名</param>
+        /// <returns></returns>
+        public DataSet ExcelToDataTableByStream(bool isFirstColumn, Stream stream, string fileName)
+        {
+            IWorkbook workbook = null;
+            var ds = new DataSet();
+
+            if (fileName.EndsWith(".xlsx"))
+            {
+                workbook = new XSSFWorkbook(stream);
+            }
+            else if (fileName.EndsWith(".xls"))
+            {
+                workbook = new HSSFWorkbook((FileStream) null);
+            }
+
+            var sheetNum = workbook?.NumberOfSheets;
+            for (var x = 0; x < (sheetNum ?? 0); x++)
+            {
+                var data = new DataTable();
+                var sheet = workbook?.GetSheetAt(x);
+
+                var firstRow = sheet?.GetRow(0);
+                if (firstRow == null) continue;
+
+                int cellCount = firstRow.LastCellNum; //一行最后一个cell的编号 即总的列数
+                int startRow;
+                if (isFirstColumn)
+                {
+                    for (int i = firstRow.FirstCellNum; i < cellCount; ++i)
+                    {
+                        var column = new DataColumn(firstRow.GetCell(i).StringCellValue);
+                        data.Columns.Add(column);
+                    }
+                    startRow = sheet.FirstRowNum + 1;
+                }
+                else
+                {
+                    startRow = sheet.FirstRowNum;
+                }
+
+                //最后一列的标号,即总的行数
+                var rowCount = sheet.LastRowNum;
+                for (var i = startRow; i <= rowCount; ++i)
+                {
+                    var row = sheet.GetRow(i);
+                    if (row == null) continue; //没有数据的行默认是null　　　　　　　
+
+                    var dataRow = data.NewRow();
+                    for (int j = row.FirstCellNum; j < cellCount; ++j)
+                    {
+                        if (row.GetCell(j) != null) //同理，没有数据的单元格都默认是null
+                            dataRow[j] = row.GetCell(j).ToString();
+                    }
+                    data.Rows.Add(dataRow);
+                }
+
+                ds.Tables.Add(data);
+            }
+
+            return ds;
         }
         #endregion
     }
