@@ -232,20 +232,20 @@ namespace Test.Controllers
                 if (string.IsNullOrWhiteSpace(myfile?.FileName))
                 {
                     errors.Add("失败,未获取到文件！");
-                    return Json(JsonConvert.SerializeObject(errors), JsonRequestBehavior.AllowGet);
+                    return Json(new {success = false, data = errors}, JsonRequestBehavior.AllowGet);
                 }
                 var fileName = myfile.FileName;
 
                 if (!fileName.EndsWith(".xls") && !fileName.EndsWith(".xlsx"))
                 {
                     errors.Add("失败,仅能上传.xls或.xlsx文件的格式！");
-                    return Json(JsonConvert.SerializeObject(errors), JsonRequestBehavior.AllowGet);
+                    return Json(new {success = false, data = errors}, JsonRequestBehavior.AllowGet);
                 }
 
                 if (myfile.ContentLength / (1024 * 1024) > 10) //大于10M
                 {
                     errors.Add("失败,文件容量大于10M！");
-                    return Json(JsonConvert.SerializeObject(errors), JsonRequestBehavior.AllowGet);
+                    return Json(new {success = false, data = errors}, JsonRequestBehavior.AllowGet);
                 }
 
                 var ds = exportManager.ExcelToDataTableByStream(true, myfile.InputStream, fileName);
@@ -253,7 +253,7 @@ namespace Test.Controllers
                 if (ds == null || ds.Tables.Count <= 0 || ds.Tables[0].Rows.Count == 0)
                 {
                     errors.Add("失败,文件内没有内容！");
-                    return Json(JsonConvert.SerializeObject(errors), JsonRequestBehavior.AllowGet);
+                    return Json(new {success = false, data = errors}, JsonRequestBehavior.AllowGet);
                 }
                 var dt = ds.Tables[0];
                 //验证列是否存在
@@ -261,19 +261,19 @@ namespace Test.Controllers
                 errors.AddRange(from msg in colums.Split(',') where dt.Columns[msg] == null select $"该导入的文件中没有\"{msg}\"这一列！");
                 if (errors.Count > 0)
                 {
-                    return Json(JsonConvert.SerializeObject(errors), JsonRequestBehavior.AllowGet);
+                    return Json(new {success = false, data = errors}, JsonRequestBehavior.AllowGet);
                 }
                 //过滤空白行
                 dt = dt.AsEnumerable().Where(x => !string.IsNullOrEmpty(x.Field<string>("队员"))).CopyToDataTable();
 
-                return Json(JsonConvert.SerializeObject(dt), JsonRequestBehavior.AllowGet);
+                return Json(new {success = true, data = JsonConvert.SerializeObject(dt)}, JsonRequestBehavior.AllowGet);
             }
             catch (Exception ex)
             {
                 errors.Add("导入错误，" + ex.Message);
             }
 
-            return Json(JsonConvert.SerializeObject(errors), JsonRequestBehavior.AllowGet);
+            return Json(new {success = false, data = errors}, JsonRequestBehavior.AllowGet);
         }
         #endregion
 

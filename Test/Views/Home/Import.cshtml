@@ -1,25 +1,52 @@
 ﻿@{
     ViewBag.Title = "文件导入";
 }
+<style>
+    .file {
+		position: relative;
+		display: inline-block;
+		border: 1px solid #99D3F5;
+		border-radius: 4px;
+		overflow: hidden;
+		color: #1E88C7;
+		text-decoration: none;
+		text-indent: 0;
+		line-height: 20px;
+	}
+	.file input {
+		position: absolute;
+		font-size: 100px;
+		right: 0;
+		top: 0;
+		opacity: 0;
+	}
+	.file:hover {
+		border-color: #78C3F3;
+		color: #004974;
+		text-decoration: none;
+	}
+</style>
 
 <h2>文件导入</h2>
-
 <div class="container">
     <form method="post" class="form-inline" id="fileForm" enctype="multipart/form-data">
         <div class="form-group">
-            <input type="file" id="myfile" name="myfile" class="form-control" style="width: 300px; display: inline;"/>
-        </div>
-        <div class="form-group">
-            <a class="btn btn-primary" href="~/Temple/山王工业.xlsx">下载模板</a>
+            <a class="btn file" style="width: 200px;">
+                <i class="glyphicon glyphicon-folder-open"></i>&nbsp;&nbsp;&nbsp;&nbsp;选择文件<input type="file" id="myfile" name="myfile"/>
+            </a>
         </div>
         <div class="form-group">
             <button type="button" class="btn btn-primary" onclick="pageJs.upload();">导入</button>
+        </div>
+        <div class="form-group">
+            <a href="~/Temple/山王工业.xlsx">下载模板</a>
         </div>
     </form>
 </div>
 <br>
 <div class="container">
-    <table class="table" id="mytable">
+    <table class="table">
+        <tbody id="mytable"></tbody>
     </table>
 </div>
 
@@ -39,9 +66,11 @@
             $("#fileForm").ajaxSubmit({
                 type: "POST",
                 url: "/Home/ImportExcel",
-                success: function (data) {
-                    if (data.length > 0) {
-                        pageJs.fillTable(JSON.parse(data));
+                success: function (resouce) {
+                    if (resouce.success) {
+                        pageJs.fillTable(JSON.parse(resouce.data));
+                    } else {
+                        pageJs.msgTable(resouce.data);
                     }
                     return false;
                 },
@@ -50,26 +79,34 @@
                 }
             });
         },
+        msgTable: function (list) {
+            for (var i = 0; i < list.length; i++) {
+                $("#mytable").append('<tr class="active"><th>' + (i+1) + '</th><th>' + list[i] + '</th></tr>');
+            }
+        },
         fillTable: function (list) {
-            $("#mytable").empty();
-            var html = "";
+            $("#mytable").html("");
             for (var i = 0; i < list.length; i++) {
                 var obj = list[i];
-                if (i == 0) {
-                    html += "<tr class='active'>";
+                if (i < 1) {
+                    var th = "<tr class='active'>";
                     for (var g in obj) {
-                        html += "<th>" + g + "</th>";
+                        if (obj.hasOwnProperty(g)) {
+                            th += "<th>" + g + "</th>";
+                        }
                     }
-                    html += "</tr>";
+                    th += "</tr>";
+                    $("#mytable").append(th);
                 }
-                html += "<tr>";
+                var td = "<tr>";
                 for (var j in obj) {
-                    html += "<td>" + (obj[j] == null ? "" : obj[j]) + "</td>";
+                    if (obj.hasOwnProperty(j)) {
+                        td += "<td>" + (obj[j] == null ? "" : obj[j]) + "</td>";
+                    }
                 }
-                html += "</tr>";
+                td += "</tr>";
+                $("#mytable").append(td);
             }
-            $("#mytable").append(html);
-            $("#mytable").trigger("create");
         }
     }
 </script>
