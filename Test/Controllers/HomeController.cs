@@ -51,6 +51,11 @@ namespace Test.Controllers
         {
             return View();
         }
+
+        public ActionResult Column()
+        {
+            return View();
+        }
         #endregion
 
         #region 页面回调

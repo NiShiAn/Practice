@@ -1,0 +1,493 @@
+﻿@{
+    ViewBag.Title = "列隐藏";
+}
+<style>
+    .peizhi {
+        width: 120px; 
+        height: 220px; 
+        position: absolute; 
+        background-color: #fff; 
+        margin-left: 25px; 
+        margin-top: -10px; 
+        overflow-y: auto; 
+        z-index: 100; 
+        padding: 3px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+        display: none;
+    }
+    .item {
+        padding-left: 10px;
+        line-height: 10px;
+    }
+    .item label {
+        font-weight: normal;
+        margin-left: 2px;
+    }
+</style>
+<h2>列隐藏</h2>
+
+<div class="container">
+    <table class="table" id="tab1">
+        <tr class="active">
+            <th>前天</th>
+            <th>昨天</th>
+            <th>今天</th>
+            <th>明天</th>
+            <th>后天</th>
+            <th style="width: 20px; text-align: left;" title="列表显示配置">
+                <i class="glyphicon glyphicon-cog" style="color: #666666" id="tabColumn1"></i>
+                <div class="peizhi"></div>
+            </th>
+        </tr>
+        <tr>
+            <td>2017-09-06</td>
+            <td>2017-09-07</td>
+            <td>2017-09-08</td>
+            <td>2017-09-09</td>
+            <td>2017-09-00</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>2017-10-16</td>
+            <td>2017-10-17</td>
+            <td>2017-10-18</td>
+            <td>2017-10-19</td>
+            <td>2017-10-10</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>2017-11-26</td>
+            <td>2017-11-27</td>
+            <td>2017-11-28</td>
+            <td>2017-11-29</td>
+            <td>2017-11-30</td>
+            <td></td>
+        </tr>
+    </table>
+    <table class="table" id="tab2">
+        <tr class="active">
+            <th>日期</th>
+            <th>标题</th>
+            <th>作者</th>
+            <th>状态</th>
+            <th style="width: 20px; text-align: left;" title="列表显示配置">
+                <i class="glyphicon glyphicon-cog" style="color: #666666" id="tabColumn2"></i>
+                <div class="peizhi"></div>
+            </th>
+        </tr>
+        <tr>
+            <td rowspan="3">2017-09-06</td>
+            <td>十九大精神进央企：做“一带一路”的积极践行者</td>
+            <td rowspan="2">吴海</td>
+            <td>有效</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td class="hide"></td>
+            <td>中科院：2017年新增61名中国科学院院士16名外籍院士</td>
+            <td class="hide">刘新</td>
+            <td>有效</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td class="hide"></td>
+            <td>俄媒：中国人为何比我们富了？ 发展道路不同</td>
+            <td>冯强</td>
+            <td>失效</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td rowspan="2">2017-11-12</td>
+            <td>视频-台湾情侣在大陆坐高铁：火车站实在是太大 不跑会迟到</td>
+            <td>张萌</td>
+            <td>有效</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td class="hide"></td>
+            <td>钧正平：自杀逃罪恶劣 反腐永在路上</td>
+            <td>任天可</td>
+            <td>失效</td>
+            <td></td>
+        </tr>
+    </table>
+    <table class="table" id="tab3">
+        <tr class="active">
+            <th>日期</th>
+            <th>标题</th>
+            <th>作者</th>
+            <th>状态</th>
+            <th style="width: 20px; text-align: left;" title="列表显示配置">
+                <i class="glyphicon glyphicon-cog" style="color: #666666" id="tabColumn3"></i>
+                <div class="peizhi"></div>
+            </th>
+        </tr>
+        <tr>
+            <td rowspan="3">2017-09-06</td>
+            <td>十九大精神进央企：做“一带一路”的积极践行者</td>
+            <td>吴海</td>
+            <td>有效</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>中科院：2017年新增61名中国科学院院士16名外籍院士</td>
+            <td rowspan="2">刘新</td>
+            <td>有效</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>俄媒：中国人为何比我们富了？ 发展道路不同</td>
+            @*<td>冯强</td>*@
+            <td>失效</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td rowspan="2">2017-11-12</td>
+            <td>视频-台湾情侣在大陆坐高铁：火车站实在是太大 不跑会迟到</td>
+            <td>张萌</td>
+            <td>有效</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>钧正平：自杀逃罪恶劣 反腐永在路上</td>
+            <td>任天可</td>
+            <td>失效</td>
+            <td></td>
+        </tr>
+    </table>
+</div>
+
+<script>
+    $.extend({
+        cookie: {
+            del: function() {
+                if (arguments.length < 1)
+                    return;
+                var expDate = new Date(),
+                    cookieName = arguments[0],
+                    cookieValue = $.cookie.get(cookieName),
+                    path = arguments.length > 1 ? ";path=/" : "";
+
+                expDate.setTime(expDate.getTime() - 1);
+                if (cookieValue != null)
+                    document.cookie = cookieName + "=" + escape(cookieValue) + ";expires=" + expDate.toGMTString() + path;
+            },
+            get: function() {
+                if (arguments.length < 1)
+                    return null;
+                var cookieName = arguments[0],
+                    tempReg = new RegExp("(^| )" + cookieName + "=([^;]*)(;|$)"),
+                    cookieValue = document.cookie.match(tempReg);
+
+                if (cookieValue)
+                    return unescape(cookieValue[2]);
+                else
+                    return null;
+            },
+            set: function() {
+                if (arguments.length < 2)
+                    return;
+                var cookieName = arguments[0],
+                    cookieValue = arguments[1],
+                    cookieTime = arguments.length > 2 ? arguments[2] : 30,
+                    tempSec = $.cookie.getSec(cookieTime),
+                    path = arguments.length > 3 ? ";path=/" : "",
+                    expDate = new Date();
+
+                expDate.setTime(expDate.getTime() + tempSec);
+                if ($.cookie.get(cookieName))
+                    $.cookie.del(cookieName);
+                document.cookie = cookieName + "=" + escape(cookieValue) + ";expires=" + expDate.toGMTString() + path;
+            },
+            getSec: function() {
+                if (arguments.length < 1)
+                    return null;
+                return arguments[0] * 24 * 60 * 60 * 1000;
+            }
+        }
+    });
+    var thisPage = {
+        temlate: {
+            ColumnConfig:
+                '<div class="item" data-index="columnindex">\
+                    <input type="checkbox" style="margin-top:5px" value="columnindex" id="columnId">\
+                    <label for="columnId">columnname</label>\
+                </div>'
+        },
+        //无，行合并
+        ColumnConfig: function(config) {
+            var columnConfig = $.cookie.get(config.keys);
+            if (columnConfig != null && columnConfig.length > 0) {
+                columnConfig = columnConfig.split("|");
+                for (var i = 0; i < columnConfig.length; i++) {
+                    if (columnConfig[i].length > 0) {
+                        $('#' + config.Id).find("tr th").eq(columnConfig[i]).hide();
+                        $.each($('#' + config.Id).find("tr"), function(n, m) {
+                            $(m).find("td").eq(columnConfig[i]).hide();
+                        });
+                    }
+                }
+            }
+            if (config.load == 0)
+                return false;
+            $(config.columId).bind("click", function() {
+                var e = e || window.event;
+                if (e && e.stopPropagation)
+                    e.stopPropagation();
+                else {
+                    window.event.cancelBubble = true;
+                }
+                var divHeight = 0;
+                var columnConfigDiv = $(config.columId).next();
+                columnConfigDiv.html("");
+                columnConfigDiv.html("");
+                $.each($('#' + config.Id).find("tr th:not(:last-child)"), function(i, e) {
+                    if ($(e).text().length > 0) {
+                        var html = thisPage.temlate.ColumnConfig
+                            .replace("columnname", $(e).text())
+                            .replace("columnindex", i)
+                            .replace("columnindex", i)
+                            .replace("columnId", config.keys + "_" + i)
+                            .replace("columnId", config.keys + "_" + i);
+                        columnConfigDiv.append(html);
+                        divHeight += 25;
+                    }
+                });
+                divHeight = divHeight > 284 ? 284 : divHeight;
+                columnConfigDiv.css("height", divHeight + "px");
+                var configCookie = $.cookie.get(config.keys) || "";
+                configCookie = configCookie.split("|");
+                $.each($(config.columId).next().find("div input"), function(i, m) {
+                    if ($.inArray($(this).val(), configCookie) == -1) {
+                        $(this).prop('checked', true);
+                    }
+                });
+                $(config.columId).next().find("div input").bind("change", function() {
+                    var e = e || window.event;
+                    if (e && e.stopPropagation)
+                        e.stopPropagation();
+                    else {
+                        window.event.cancelBubble = true;
+                    }
+                    var $this = $(this);
+                    if ($this.parent().parent().find('input:checked').length < 1) {
+                        $(this).prop('checked', true);
+                        return false;
+                    }
+                    var isChecker = $this[0].nodeName == "INPUT";
+                    var index = $this.parent().data("index");
+                    var check = $this.parent().find("input");
+                    var table = $('#' + config.Id);
+                    var hideColumnDiv = $('#' + config.Id + "_template_div_model_page");
+                    if ((!isChecker && !check.prop('checked')) || (isChecker && check.prop('checked'))) {
+                        table.find("tr th").eq(index).show();
+                        $.each(table.find("tr"), function(i, m) {
+                            $(m).find("td").eq(index).show();
+                        });
+                        if (!isChecker) check.prop('checked', true);
+                        if (hideColumnDiv)
+                            hideColumnDiv.find("tr td").eq(index).show();
+                    } else {
+                        if (!isChecker) check.prop('checked', false);
+                        table.find("tr th").eq(index).hide();
+                        $.each(table.find("tr"), function(i, m) {
+                            $(m).find("td").eq(index).hide();
+                        });
+                        if (hideColumnDiv)
+                            hideColumnDiv.find("tr td").eq(index).hide();
+                    }
+                    var hideColumn = "";
+                    $.each($(config.columId).next().find("div input"), function(i, m) {
+                        if (!$(this).prop('checked'))
+                            hideColumn += $(this).val() + "|";
+                    });
+                    $.cookie.set(config.keys, hideColumn);
+                });
+                columnConfigDiv.click(function() {
+                    var e = e || window.event;
+                    if (e && e.stopPropagation)
+                        e.stopPropagation();
+                    else {
+                        window.event.cancelBubble = true;
+                    }
+                });
+                columnConfigDiv.toggle("hide");
+            });
+            $("body").click(function() {
+                $(config.columId).next().css("display", "none");
+            });
+        },
+        //有，行合并
+        DynamicColumn: function (config) {
+            var columnConfig = $.cookie.get(config.keys);
+            if (columnConfig != null && columnConfig.length > 0) {
+                columnConfig = columnConfig.split("|");
+                var tabList = thisPage.GetTableList($('#' + config.Id));
+                for (var i = 0; i < columnConfig.length; i++) {
+                    if (columnConfig[i].length > 0) {
+                        $('#' + config.Id).find("tr th").eq(columnConfig[i]).hide();
+                        $.each(tabList, function (n, m) {
+                            if (m[columnConfig[i]].td != null)
+                                $(m[columnConfig[i]].td).hide();
+                        });
+                    }
+                }
+            }
+            if (config.load == 0)
+                return false;
+            $(config.columId).bind("click", function () {
+                var e = e || window.event;
+                if (e && e.stopPropagation)
+                    e.stopPropagation();
+                else {
+                    window.event.cancelBubble = true;
+                }
+                var divHeight = 0;
+                var columnConfigDiv = $(config.columId).next();
+                columnConfigDiv.html("");
+                columnConfigDiv.html("");
+                $.each($('#' + config.Id).find("tr th:not(:last-child)"), function (i, e) {
+                    if ($(e).text().length > 0) {
+                        var html = thisPage.temlate.ColumnConfig
+                            .replace("columnname", $(e).text())
+                            .replace("columnindex", i)
+                            .replace("columnindex", i)
+                            .replace("columnId", config.keys + "_" + i)
+                            .replace("columnId", config.keys + "_" + i);
+                        columnConfigDiv.append(html);
+                        divHeight += 25;
+                    }
+                });
+                divHeight = divHeight > 284 ? 284 : divHeight;
+                columnConfigDiv.css("height", divHeight + "px");
+                var configCookie = $.cookie.get(config.keys) || "";
+                configCookie = configCookie.split("|");
+                $.each($(config.columId).next().find("div input"), function (i, m) {
+                    if ($.inArray($(this).val(), configCookie) == -1) {
+                        $(this).prop('checked', true);
+                    }
+                });
+                $(config.columId).next().find("div input").bind("change", function () {
+                    var e = e || window.event;
+                    if (e && e.stopPropagation)
+                        e.stopPropagation();
+                    else {
+                        window.event.cancelBubble = true;
+                    }
+                    var $this = $(this);
+                    if ($this.parent().parent().find('input:checked').length < 1) {
+                        $(this).prop('checked', true);
+                        return false;
+                    }
+                    var isChecker = $this[0].nodeName == "INPUT";
+                    var index = $this.parent().data("index");
+                    var check = $this.parent().find("input");
+                    var table = $('#' + config.Id);
+                    var tabList = thisPage.GetTableList($('#' + config.Id));
+                    var hideColumnDiv = $('#' + config.Id + "_template_div_model_page");
+                    if ((!isChecker && !check.prop('checked')) || (isChecker && check.prop('checked'))) {
+                        table.find("tr th").eq(index).show();
+                        $.each(tabList, function (i, m) {
+                            if (m[index].td != null)
+                                $(m[index].td).show();
+                        });
+                        if (!isChecker) check.prop('checked', true);
+                        if (hideColumnDiv)
+                            hideColumnDiv.find("tr td").eq(index).show();
+                    } else {
+                        if (!isChecker) check.prop('checked', false);
+                        table.find("tr th").eq(index).hide();
+                        $.each(tabList, function (i, m) {
+                            if (m[index].td != null)
+                                $(m[index].td).hide();
+                        });
+                        if (hideColumnDiv)
+                            hideColumnDiv.find("tr td").eq(index).hide();
+                    }
+                    var hideColumn = "";
+                    $.each($(config.columId).next().find("div input"), function (i, m) {
+                        if (!$(this).prop('checked'))
+                            hideColumn += $(this).val() + "|";
+                    });
+                    $.cookie.set(config.keys, hideColumn);
+                });
+                columnConfigDiv.click(function () {
+                    var e = e || window.event;
+                    if (e && e.stopPropagation)
+                        e.stopPropagation();
+                    else {
+                        window.event.cancelBubble = true;
+                    }
+                });
+                columnConfigDiv.toggle("hide");
+            });
+            $("body").click(function () {
+                $(config.columId).next().css("display", "none");
+            });
+        },
+        GetTableList: function (table) {
+            var ths = $(table).find('tr:first th').length - 1;//去掉末尾配置td
+            var list = [];
+            $.each($(table).find("tr:not(:first)"), function (n, ngy) {
+                var tds = $(ngy).find('td');
+                var trData = [];
+                //简化逻辑代码
+                var prevTr = n < 1 ? null : list[n - 1];
+                var tdIndex = 0;
+                for (var i = 0; i < ths; i++) {
+                    if (prevTr != null && prevTr[i].rowSpan - prevTr[i].index > 0) {//被上一行合并，无实际td
+                        trData.push({
+                            td: null,
+                            rowSpan: prevTr[i].rowSpan,
+                            index: prevTr[i].index + 1
+                        });
+                    } else {
+                        trData.push({
+                            td: tds[tdIndex],
+                            rowSpan: parseInt($(tds[tdIndex]).attr("rowspan") || 1),
+                            index: 1
+                        });
+                        tdIndex++;
+                    }
+                }
+                //思路逻辑代码
+                //if (ths == tds.length - 1) {//没有合并行
+                //    for (var i = 0; i < ths; i++) {
+                //        trData.push({
+                //            td: tds[i],
+                //            rowSpan: parseInt($(tds[i]).attr("rowspan") || 1),
+                //            index: 1
+                //        });
+                //    }
+                //} else {//有合并行
+                //    var tdi = 0;
+                //    var prevTr = list[n - 1];//上一行数据
+                //    for (var b = 0; b < ths; b++) {
+                //        var num = prevTr[b].rowSpan - prevTr[b].index;
+                //        if (num > 0) {//被上一行合并，无实际td
+                //            trData.push({
+                //                td: null,
+                //                rowSpan: prevTr[b].rowSpan,
+                //                index: prevTr[b].index + 1
+                //            });
+                //        } else {
+                //            trData.push({
+                //                td: tds[tdi],
+                //                rowSpan: parseInt($(tds[tdi]).attr("rowspan") || 1),
+                //                index: 1
+                //            });
+                //            tdi++;
+                //        }
+                //    }
+                //}
+                list.push(trData);
+            });
+            return list;
+        }
+    };
+    $(function() {
+        thisPage.ColumnConfig({ Id: "tab1", keys: "x_tabColumn", columId: "#tabColumn1", load: 1 });
+        thisPage.ColumnConfig({ Id: "tab2", keys: "y_tabColumn", columId: "#tabColumn2", load: 1 });
+        thisPage.DynamicColumn({ Id: "tab3", keys: "z_tabColumn", columId: "#tabColumn3", load: 1 });
+    });
+</script>

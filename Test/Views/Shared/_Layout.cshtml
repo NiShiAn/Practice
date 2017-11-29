@@ -10,6 +10,9 @@
     <link href="~/Content/bootstrap.min.css" rel="stylesheet" type="text/css"/>
     <link rel="stylesheet" type="text/css" href="/Content/iconfont.css">
     <script src="~/Scripts/modernizr-2.6.2.js"></script>
+    <script src="~/Scripts/jquery-3.2.1.min.js"></script>
+    <script src="~/Scripts/bootstrap.min.js"></script>
+    <script src="~/Scripts/jquery.form.js"></script>
 </head>
 <body>
     <div class="navbar navbar-inverse navbar-fixed-top">
@@ -27,6 +30,7 @@
                 @Html.ActionLink("文件导出", "Export", "Home", new { area = "" }, new { @class = "navbar-brand" })
                 @Html.ActionLink("文件导入", "Import", "Home", new { area = "" }, new { @class = "navbar-brand" })
                 @Html.ActionLink("行内列表", "Row", "Home", new { area = "" }, new { @class = "navbar-brand" })
+                @Html.ActionLink("列隐藏", "Column", "Home", new { area = "" }, new { @class = "navbar-brand" })
             </div>
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
@@ -42,9 +46,5 @@
             <p>&copy; @DateTime.Now.Year - My ASP.NET Application</p>
         </footer>
     </div>
-
-    <script src="~/Scripts/jquery-3.2.1.min.js"></script>
-    <script src="~/Scripts/bootstrap.min.js"></script>
-    <script src="~/Scripts/jquery.form.js"></script>
 </body>
 </html>
