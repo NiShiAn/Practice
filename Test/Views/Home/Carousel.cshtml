@@ -1,0 +1,217 @@
+﻿@{
+    ViewBag.Title = "图片轮播";
+}
+<style>
+	* {
+		margin: 0;
+		padding: 0;
+	}
+     .banner {
+         float: left;
+         width: 809px;
+         height: 349px;
+     }
+    .wrapper {
+        width: 800px;
+    }
+    /* focus */
+    #focus {
+        width: 800px;
+        height: 349px;
+        overflow: hidden;
+        position: relative;
+    }
+    #focus ul {
+        height: 349px;
+        position: absolute;
+    }
+    #focus ul li {
+        float: left;
+        width: 800px;
+        height: 349px;
+        overflow: hidden;
+        position: relative;
+        background: #FFF;
+    }
+    #focus .btnBg {
+        position: absolute;
+        width: 800px;
+        height: 20px;
+        left: 0;
+        bottom: 0;
+        background: #000 none repeat scroll 0 0;
+    }
+    #focus .bbtn {
+        position: absolute;
+        width: 780px;
+        right: 0;
+        bottom: 0;
+        text-align: center;
+    }
+    #focus .bbtn span {
+        display: inline-block;
+        _display: inline;
+        _zoom: 1;
+        width: 25px;
+        height: 10px;
+        _font-size: 0;
+        margin-left: 5px;
+        cursor: pointer;
+        background: #fff;
+    }
+    #focus .bbtn span.on {
+        background: #fff;
+    }
+    #focus .preNext {
+        width: 45px;
+        height: 100px;
+        line-height: 100px;
+        position: absolute;
+        top: 90px;
+        text-align: center;
+        font-size: 36px;
+        color: #fff;
+        background-color: rgba(255, 255, 255, .4);
+        cursor: pointer;
+    }
+    #focus .preNext:hover {
+        background-color: #ccc;
+        opacity: 0.5;
+    }
+    #focus .pre {
+        left: 0;
+    }
+    #focus .next {
+        right: 0;
+    }
+</style>
+<h2>图片轮播</h2>
+
+<div class="container">
+    <div class="banner">
+        <div class="wrapper">
+            <div id="focus">
+                <ul>
+                    <li style="background-color: chocolate;">
+                        <a><img src="images/sli2de1.jpg"></a>
+                    </li>
+                    <li style="background-color: cadetblue;">
+                        <a><img src="images/sli1de2.jpg"></a>
+                    </li>
+                    <li style="background-color: cornflowerblue;">
+                        <a><img src="images/slid3e3.jpeg"></a>
+                    </li>
+                    <li style="background-color: darkolivegreen;">
+                        <a><img src="images/slid3e3.jpeg"></a>
+                    </li>
+                </ul>
+                <!--左右下一张的标签-->
+                <div class="pre preNext leftNext"><strong>&lt;</strong></div>
+                <div class="next preNext rightNext"><strong>&gt;</strong></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(function () {
+        //获取轮播图的宽度
+        var sWidth = $("#focus").width();
+        //获取li的个数，也就是图片张数
+        var len = $("#focus ul li").length;
+        //声明个变量，用作记录第几张图片显示。默认0
+        var index = 0;
+        //定义个 定时事件
+        var picTimer;
+        //通过for循环 动态 在后面添加小长方形。
+        var btn = "<div class='btnBg'></div><div class='bbtn'>";
+        for (var i = 0; i < len; i++) {
+            btn += "<span></span>";
+        }
+        btn += "</div>";
+        $("#focus").append(btn);
+        $("#focus .btnBg").css("opacity", 0.5);
+
+        //小长方形移上鼠标动态获取 第几个小长方形的坐标，并传入showPics()函数
+        $("#focus .bbtn span").css("opacity", 0.4).mouseover(function () {
+            index = $("#focus .bbtn span").index(this);
+            showPics(index);
+        }).eq(0).trigger("mouseover");
+
+        $("#focus ul").css("width", sWidth * (len));
+
+        //移上鼠标出去 定时事件，图片不在滚动。后面调用离开鼠标事件。
+        $("#focus").hover(function () {
+            clearInterval(picTimer);
+        }, function () {
+            picTimer = setInterval(function () {
+                showPics(index);
+                index++;
+                if (index == len) {
+                    index = 0;
+                }
+            }, 20000);
+        }).trigger("mouseleave");
+
+        //动画轮播过渡效果函数。
+        function showPics(index) {
+            var nowLeft = -index * sWidth;
+            $("#focus ul").stop(true, false).animate({
+                "left": nowLeft
+            }, 300);
+
+            $("#focus .bbtn span").stop(true, false).animate({
+                "opacity": "0.4"
+            }, 300).eq(index).stop(true, false).animate({
+                "opacity": "1"
+            }, 300);
+        }
+
+        /*//给上一张，下一张添加点击事件
+        function lrNextBtn(num) {
+            return function() {
+                alert(index);
+                if(num < 0) {
+                    index = index - 1;
+
+                    if(index == -1) {
+                        index = len - 1;
+                    }
+                    showPics(index);
+                } else {
+                    index = index + 1;
+
+                    if(index == len - 1) {
+                        index = 0;
+                    }
+                    showPics(index);
+                }
+            }
+        }
+        //给按钮添加点击事件
+        $(".wrapper .focus .pre").click(lrNextBtn(-1));
+        $(".wrapper .focus .next").click(lrNextBtn(1));*/
+
+        //左键
+        function leftNext() {
+            index = index - 1;
+
+            if (index == -1) {
+                index = len - 1;
+            }
+            showPics(index);
+        }
+        //右键
+        function rightNext() {
+            index = index + 1;
+
+            if (index == len) {
+                index = 0;
+            }
+            showPics(index);
+        }
+
+        $(".leftNext").click(leftNext);
+        $(".rightNext").click(rightNext);
+    });
+</script>

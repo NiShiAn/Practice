@@ -174,6 +174,7 @@
     <Content Include="Views\Home\Import.cshtml" />
     <Content Include="Temple\山王工业.xlsx" />
     <Content Include="Views\Home\Column.cshtml" />
+    <Content Include="Views\Home\Carousel.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

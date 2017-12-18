@@ -56,6 +56,11 @@ namespace Test.Controllers
         {
             return View();
         }
+
+        public ActionResult Carousel()
+        {
+            return View();
+        }
         #endregion
 
         #region 页面回调
