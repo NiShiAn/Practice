@@ -6,7 +6,9 @@ using System.Linq;
 using System.Reflection;
 using System.Web;
 using System.Web.Mvc;
+using Autofac;
 using Newtonsoft.Json;
+using Test;
 using Test.COM;
 using Test.COM.Entity;
 
@@ -14,7 +16,12 @@ namespace Test.Controllers
 {
     public class HomeController : Controller
     {
-        private IExportManager exportManager = new ExportManager();
+        private readonly IExportManager _exportManager;
+
+        public HomeController(IExportManager exportManager)
+        {
+            _exportManager = exportManager;
+        }
         #region 功能页面
         public ActionResult Index()
         {
@@ -109,7 +116,7 @@ namespace Test.Controllers
                 switch (type)
                 {
                     case 1:
-                        stream = exportManager.ExportExcelForList(
+                        stream = AutofacConfig.GetContainer().Resolve<IExportManager>().ExportExcelForList(
                             new Tuple<string, Dictionary<string, string>, List<SpotInfo>>("麦兜好可爱", colums1, list), true);
                         break;
                     case 2:
@@ -117,7 +124,7 @@ namespace Test.Controllers
                         {
                             new Tuple<string, Dictionary<string, string>, DataTable>("Life's A Struggle", colums2, ToDataTable(list)),
                         };
-                        stream = exportManager.ExportExcelBatchDataTable(tupleList1, true);
+                        stream = AutofacConfig.GetContainer().Resolve<IExportManager>().ExportExcelBatchDataTable(tupleList1, true);
                         break;
                     case 3:
                         var tupleList2 = new List<Tuple<string, Dictionary<string, string>, DataTable>>()
@@ -125,7 +132,7 @@ namespace Test.Controllers
                             new Tuple<string, Dictionary<string, string>, DataTable>("精神可嘉", colums1, ToDataTable(list)),
                             new Tuple<string, Dictionary<string, string>, DataTable>("不错de", colums2, ToDataTable(list)),
                         };
-                        stream = exportManager.ExportExcelBatchDataTable(tupleList2, true);
+                        stream = AutofacConfig.GetContainer().Resolve<IExportManager>().ExportExcelBatchDataTable(tupleList2, true);
                         break;
                     default:
                         var tupleList3 = new List<Tuple<string, Dictionary<string, string>, DataTable>>()
@@ -133,7 +140,7 @@ namespace Test.Controllers
                             new Tuple<string, Dictionary<string, string>, DataTable>("团队信息", colums3, ToDataTable(tour)),
                             new Tuple<string, Dictionary<string, string>, DataTable>("景点信息", colums2, ToDataTable(list)),
                         };
-                        stream = exportManager.ExportExcelBlockData("颠倒日月", tupleList3, true);
+                        stream = AutofacConfig.GetContainer().Resolve<IExportManager>().ExportExcelBlockData("颠倒日月", tupleList3, true);
                         break;
                 }
 
@@ -212,13 +219,13 @@ namespace Test.Controllers
                 switch (type)
                 {
                     case 1:
-                        stream = exportManager.ExportWordTemplate(Server.MapPath("~/Temple/个人信息.docx"), colums1);
+                        stream = _exportManager.ExportWordTemplate(Server.MapPath("~/Temple/个人信息.docx"), colums1);
                         break;
                     case 2:
-                        stream = exportManager.ExportWordCreateTable(Server.MapPath("~/Temple/景点信息.docx"), colums2, tupleList1);
+                        stream = _exportManager.ExportWordCreateTable(Server.MapPath("~/Temple/景点信息.docx"), colums2, tupleList1);
                         break;
                     default:
-                        stream = exportManager.ExportWordExtendTable(Server.MapPath("~/Temple/出游计划.docx"), colums5, tupleList2);
+                        stream = _exportManager.ExportWordExtendTable(Server.MapPath("~/Temple/出游计划.docx"), colums5, tupleList2);
                         break;
                 }
 
@@ -258,7 +265,7 @@ namespace Test.Controllers
                     return Json(new {success = false, data = errors}, JsonRequestBehavior.AllowGet);
                 }
 
-                var ds = exportManager.ExcelToDataTableByStream(true, myfile.InputStream, fileName);
+                var ds = _exportManager.ExcelToDataTableByStream(true, myfile.InputStream, fileName);
 
                 if (ds == null || ds.Tables.Count <= 0 || ds.Tables[0].Rows.Count == 0)
                 {
