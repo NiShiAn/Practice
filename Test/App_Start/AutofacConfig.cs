@@ -1,9 +1,7 @@
-﻿using System;
-using Autofac;
+﻿using Autofac;
 using System.Reflection;
 using System.Web.Mvc;
 using Autofac.Integration.Mvc;
-using Test.COM;
 
 namespace Test
 {

@@ -27,6 +27,10 @@ namespace Test.Controllers
         {
             return View();
         }
+        public ActionResult Drag()
+        {
+            return View();
+        }
 
         public ActionResult Box()
         {
