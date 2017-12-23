@@ -61,6 +61,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Entity\ConfigGroup.cs" />
+    <Compile Include="Entity\Sheet.cs" />
     <Compile Include="Entity\SpotInfo.cs" />
     <Compile Include="Entity\TourInfo.cs" />
     <Compile Include="Entity\TourPlan.cs" />

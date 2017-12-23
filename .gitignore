@@ -10,3 +10,5 @@
 /.vs
 /Test.Console/bin/Debug
 /Test.Console/obj/Debug
+/Test.DAO/bin/Debug
+/Test.DAO/obj/Debug

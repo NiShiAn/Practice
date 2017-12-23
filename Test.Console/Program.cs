@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using Test.COM.Entity;
+using Test.DAO.DaoBase;
 
 namespace Test.Console
 {
@@ -13,7 +15,8 @@ namespace Test.Console
         {
             //StrIntercept();
             //TimeSerch();
-            LocalTime();
+            //LocalTime();
+            FactoryFun();
         }
         /// <summary>
         /// 最大宽度换行
@@ -100,6 +103,22 @@ namespace Test.Console
             System.Console.WriteLine("北京时间：" + TimeZoneInfo.ConvertTimeBySystemTimeZoneId(uis, "China Standard Time"));
 
             System.Console.ReadKey(true);
+        }
+
+        protected static void FactoryFun()
+        {
+            var manager = new BaseManager<Sheet1>();
+
+            //var list = manager.GetAll();
+            //var model = manager.Find(n => n.A == "M9S");
+            //var s = manager.Insert(new Sheet1()
+            //{
+            //    A = "A1",
+            //    B = "B1",
+            //    C = "C1",
+            //    D = "D1"
+            //});
+            var ss = manager.Update(new { B = "BB" }, n => n.A == "LAS-P");
         }
     }
 }
