@@ -100,7 +100,7 @@ namespace Test.COM
             var cStyle = workbook.CreateCellStyle();//内容样式
             cStyle.Alignment = HorizontalAlignment.Center;
             cStyle.VerticalAlignment = VerticalAlignment.Center;
-            cStyle.WrapText = false;
+            cStyle.WrapText = true;
             //填充数据
             var maxColumn = tupleList.Select(x => x.Item2.Count).Max() - 1;
             var rowIndex = 0;//行号
@@ -130,16 +130,18 @@ namespace Test.COM
                 foreach (DataRow dr in tuple.Item3.Rows)
                 {
                     var row = sheet.CreateRow(rowIndex);
+                    var height = 1;
                     var col = 0;
                     foreach (var column in tuple.Item2)
                     {
                         var value = dr.Table.Columns[column.Value] == null ? "" : dr[column.Value].ToString();
+                        height = Math.Max(value.Count(ch => ch == '\n') + 1, height);
 
                         row.CreateCell(col).SetCellValue(value);
                         row.GetCell(col).CellStyle = cStyle;
                         col++;
                     }
-
+                    row.Height = (short)(height * 15 * 20);
                     rowIndex++;
                 }
             }
@@ -201,7 +203,7 @@ namespace Test.COM
             var cStyle = workbook.CreateCellStyle();//内容样式
             cStyle.Alignment = HorizontalAlignment.Center;
             cStyle.VerticalAlignment = VerticalAlignment.Center;
-            cStyle.WrapText = false;
+            cStyle.WrapText = true;
             //创建标题行
             var titleRow = sheet.CreateRow(0);
             for (var i = 0; i < tuple.Item2.Count; i++)
@@ -220,7 +222,7 @@ namespace Test.COM
             foreach (var info in tuple.Item3)
             {
                 var row = sheet.CreateRow(rowcount);
-
+                var height = 1;
                 var properties = info.GetType().GetProperties(System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.Public);
                 var col = 0;
                 foreach (var column in tuple.Item2)
@@ -249,7 +251,9 @@ namespace Test.COM
                         }
                         else
                         {
-                            row.CreateCell(col).SetCellValue(value.ToString());
+                            var content = value?.ToString() ?? "";
+                            row.CreateCell(col).SetCellValue(content);
+                            height = Math.Max(content.Count(ch => ch == '\n') + 1, height);
                         }
                     }
                     else
@@ -260,7 +264,7 @@ namespace Test.COM
                     row.GetCell(col).CellStyle = cStyle;
                     col++;
                 }
-
+                row.Height = (short) (height*15*20);
                 rowcount++;
             }
             //列宽自适应
@@ -313,7 +317,7 @@ namespace Test.COM
             var cStyle = workbook.CreateCellStyle();//内容样式
             cStyle.Alignment = HorizontalAlignment.Center;
             cStyle.VerticalAlignment = VerticalAlignment.Center;
-            cStyle.WrapText = false;
+            cStyle.WrapText = true;
             //创建标题行
             var titleRow = sheet.CreateRow(0);
             for (var i = 0; i < tuple.Item2.Count; i++)
@@ -332,16 +336,18 @@ namespace Test.COM
             foreach (DataRow dr in tuple.Item3.Rows)
             {
                 var row = sheet.CreateRow(rowcount);
+                var height = 1;
                 var col = 0;
                 foreach (var column in tuple.Item2)
                 {
                     var value = dr.Table.Columns[column.Value] == null ? "" : dr[column.Value].ToString();
+                    height = Math.Max(value.Count(ch => ch == '\n') + 1, height);
 
                     row.CreateCell(col).SetCellValue(value);
                     row.GetCell(col).CellStyle = cStyle;
                     col++;
                 }
-
+                row.Height = (short)(height * 15 * 20);
                 rowcount++;
             }
             //列宽自适应

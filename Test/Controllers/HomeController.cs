@@ -328,7 +328,7 @@ namespace Test.Controllers
                     TourName = "HDA-U_0805_02030" + i,
                     SpotName = "千岛湖好运岛",
                     SpotId = 2005,
-                    TicketName = "成人票",
+                    TicketName = "成\n人\n票",
                     TicketId =1,
                     TourDate = Convert.ToDateTime("2017-08-02").AddDays(i),
                     UnitPrice = 20,
