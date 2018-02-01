@@ -51,6 +51,17 @@
         display: block;
         line-height: 25px;
     }
+    .eCell {
+        text-align: center !important;
+    }
+    .eCell:empty:before{
+        content:attr(placeholder);
+        font-size: 14px;
+        color: #C1C1C1;
+    }
+    .eCell:focus{
+        content:none;
+    }
 </style>
 
 <h2>表格遮罩层</h2>
@@ -75,13 +86,13 @@
                 </div>
             </td>
             <td>男</td>
-            <td>台北大学</td>
+            <td class="eCell" contenteditable="true" placeholder="点击输入" onkeypress="if(event.keyCode === 13) return false;">台北大学</td>
             <td>111111111111111111</td>
         </tr>
         <tr data-id="0" data-group="0">
             <td>阮经天</td>
             <td>男</td>
-            <td>台南大学</td>
+            <td class="eCell" contenteditable="true" placeholder="点击输入" onkeypress="if(event.keyCode === 13) return false;"></td>
             <td>222222222222222222222</td>
         </tr>
         <tr data-id="1" data-group="1">
@@ -96,13 +107,13 @@
                 </div>
             </td>
             <td>男</td>
-            <td>台东大学</td>
+            <td class="eCell" contenteditable="true" placeholder="点击输入" onkeypress="if(event.keyCode === 13) return false;">台东大学</td>
             <td>333333333333333333333333</td>
         </tr>
         <tr data-id="0" data-group="1">
             <td>黄立行</td>
             <td>男</td>
-            <td>台北大学</td>
+            <td class="eCell" contenteditable="true" placeholder="点击输入" onkeypress="if(event.keyCode === 13) return false;">台北大学</td>
             <td>444444444444444444444444444</td>
         </tr>
     </table>
