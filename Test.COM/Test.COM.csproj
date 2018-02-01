@@ -61,14 +61,19 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Comparer\StrNumberComparer.cs" />
+    <Compile Include="Entity\Book.cs" />
     <Compile Include="Entity\ConfigGroup.cs" />
+    <Compile Include="Entity\BaseItem.cs" />
     <Compile Include="Entity\Sheet.cs" />
     <Compile Include="Entity\SpotInfo.cs" />
     <Compile Include="Entity\TourInfo.cs" />
     <Compile Include="Entity\TourPlan.cs" />
-    <Compile Include="ExportManager.cs" />
-    <Compile Include="IExportManager.cs" />
+    <Compile Include="Enums\BookEnum.cs" />
+    <Compile Include="Export\ExportManager.cs" />
+    <Compile Include="Export\IExportManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Tool\Common.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config">

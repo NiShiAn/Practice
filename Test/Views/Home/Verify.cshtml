@@ -56,6 +56,10 @@
     var pageJs = {
         submit: function() {
             $("#mainf").find('input').each(function (index) {
+                if (index == 0) {
+                    //转拼音
+                    var py = $.toPinyin($(this));
+                }
                 var reg = /^[\u4e00-\u9fa5]{0,}$/;
                 switch (index) {
                     case 1:

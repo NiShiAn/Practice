@@ -47,6 +47,14 @@
     .detail:hover .dehide{
         display: block;
     }
+    .triangle{  
+        border-top: 15px solid orange;
+        border-right: 15px solid transparent;
+        width: 15px;
+        top: 0;
+        left: 0;
+        position: absolute;
+    }  
 </style>
 <h2>行内列表</h2>
 
@@ -62,7 +70,10 @@
         </tr>
         <tbody>
         <tr>
-            <td rowspan="1">产品</td>
+            <td rowspan="1" style="position: relative;">
+                产品
+                <div class="triangle"></div>
+            </td>
             <td rowspan="1">说明信息快速</td>
             <td rowspan="1"></td>
             <td><input type="checkbox" name="citem" onchange="tjs.ItemCheck(this);"/></td>

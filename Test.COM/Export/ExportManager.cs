@@ -12,7 +12,7 @@ using NPOI.SS.Util;
 using NPOI.XSSF.UserModel;
 using NPOI.XWPF.UserModel;
 
-namespace Test.COM
+namespace Test.COM.Export
 {
     public class ExportManager : IExportManager
     {

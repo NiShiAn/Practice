@@ -56,13 +56,23 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Class1.cs" />
+    <Compile Include="AutoBulider.cs" />
+    <Compile Include="Book\BookManager.cs" />
+    <Compile Include="Book\IBookManager.cs" />
+    <Compile Include="Container.cs" />
     <Compile Include="DaoBase\BaseManager.cs" />
     <Compile Include="DaoBase\IBaseManager.cs" />
+    <Compile Include="Factory.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Test.COM\Test.COM.csproj">
+      <Project>{d59d8d65-b686-4204-bfff-91aa6dbf3c5a}</Project>
+      <Name>Test.COM</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
