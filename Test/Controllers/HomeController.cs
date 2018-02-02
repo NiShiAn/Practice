@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using System.Data;
 using System.IO;
 using System.Linq;
-using System.Reflection;
+using System.Net;
 using System.Web;
 using System.Web.Mvc;
-using Autofac;
 using Newtonsoft.Json;
 using Test.COM.Entity;
 using Test.COM.Export;
+using Test.COM.Tool;
 
 namespace Test.Controllers
 {
@@ -21,6 +21,7 @@ namespace Test.Controllers
         {
             _exportManager = exportManager;
         }
+
         #region 功能页面
         public ActionResult Index()
         {
@@ -77,8 +78,6 @@ namespace Test.Controllers
         /// <summary>
         /// 导出表格
         /// </summary>
-        /// <param name="type"></param>
-        /// <returns></returns>
         public ActionResult ExportTable(int type)
         {
             try
@@ -119,31 +118,31 @@ namespace Test.Controllers
                 switch (type)
                 {
                     case 1:
-                        stream = AutofacConfig.GetContainer().Resolve<IExportManager>().ExportExcelForList(
+                        stream = AutofacConfig.GetManager<IExportManager>().ExportExcelForList(
                             new Tuple<string, Dictionary<string, string>, List<SpotInfo>>("麦兜好可爱", colums1, list), true);
                         break;
                     case 2:
                         var tupleList1 = new List<Tuple<string, Dictionary<string, string>, DataTable>>()
                         {
-                            new Tuple<string, Dictionary<string, string>, DataTable>("Life's A Struggle", colums2, ToDataTable(list)),
+                            new Tuple<string, Dictionary<string, string>, DataTable>("Life's A Struggle", colums2, list.ToDataTable()),
                         };
-                        stream = AutofacConfig.GetContainer().Resolve<IExportManager>().ExportExcelBatchDataTable(tupleList1, true);
+                        stream = AutofacConfig.GetManager<IExportManager>().ExportExcelBatchDataTable(tupleList1, true);
                         break;
                     case 3:
                         var tupleList2 = new List<Tuple<string, Dictionary<string, string>, DataTable>>()
                         {
-                            new Tuple<string, Dictionary<string, string>, DataTable>("精神可嘉", colums1, ToDataTable(list)),
-                            new Tuple<string, Dictionary<string, string>, DataTable>("不错de", colums2, ToDataTable(list)),
+                            new Tuple<string, Dictionary<string, string>, DataTable>("精神可嘉", colums1, list.ToDataTable()),
+                            new Tuple<string, Dictionary<string, string>, DataTable>("不错de", colums2, list.ToDataTable()),
                         };
-                        stream = AutofacConfig.GetContainer().Resolve<IExportManager>().ExportExcelBatchDataTable(tupleList2, true);
+                        stream = AutofacConfig.GetManager<IExportManager>().ExportExcelBatchDataTable(tupleList2, true);
                         break;
                     default:
                         var tupleList3 = new List<Tuple<string, Dictionary<string, string>, DataTable>>()
                         {
-                            new Tuple<string, Dictionary<string, string>, DataTable>("团队信息", colums3, ToDataTable(tour)),
-                            new Tuple<string, Dictionary<string, string>, DataTable>("景点信息", colums2, ToDataTable(list)),
+                            new Tuple<string, Dictionary<string, string>, DataTable>("团队信息", colums3, tour.ToDataTable()),
+                            new Tuple<string, Dictionary<string, string>, DataTable>("景点信息", colums2, list.ToDataTable()),
                         };
-                        stream = AutofacConfig.GetContainer().Resolve<IExportManager>().ExportExcelBlockData("颠倒日月", tupleList3, true);
+                        stream = AutofacConfig.GetManager<IExportManager>().ExportExcelBlockData("颠倒日月", tupleList3, true);
                         break;
                 }
 
@@ -157,8 +156,6 @@ namespace Test.Controllers
         /// <summary>
         /// 导出文档
         /// </summary>
-        /// <param name="type"></param>
-        /// <returns></returns>
         public ActionResult ExportWord(int type)
         {
             try
@@ -211,12 +208,12 @@ namespace Test.Controllers
                 //是否为表格
                 var tupleList1 = new List<Tuple<string, Dictionary<string, string>, DataTable>>()
                 {
-                    new Tuple<string, Dictionary<string, string>, DataTable>("景点信息", colums3, ToDataTable(GetSpotList())),
-                    new Tuple<string, Dictionary<string, string>, DataTable>("游客信息", colums4, ToDataTable(GetTourList())),
+                    new Tuple<string, Dictionary<string, string>, DataTable>("景点信息", colums3, GetSpotList().ToDataTable()),
+                    new Tuple<string, Dictionary<string, string>, DataTable>("游客信息", colums4, GetTourList().ToDataTable()),
                 };
                 var tupleList2 = new List<Tuple<int, string[], DataTable>>()
                 {
-                    new Tuple<int, string[], DataTable>(1, colums6, ToDataTable(GetTourPlan())),
+                    new Tuple<int, string[], DataTable>(1, colums6, GetTourPlan().ToDataTable()),
                 };
                 MemoryStream stream;
                 switch (type)
@@ -240,8 +237,7 @@ namespace Test.Controllers
             }
         }
         /// <summary>
-        /// 导入采购任务下单数据
-        /// RenYongQiang 2017/02/23
+        /// 导入Excel数据
         /// </summary>
         [HttpPost]
         public ActionResult ImportExcel(HttpPostedFileBase myfile)
@@ -294,6 +290,53 @@ namespace Test.Controllers
             }
 
             return Json(new {success = false, data = errors}, JsonRequestBehavior.AllowGet);
+        }
+
+        /// <summary>
+        /// 文档下载
+        /// path：文件路径
+        /// name：文件名称
+        /// isLocal：是否本地文件
+        /// </summary>
+        public void DownLoad(string path, string name, bool isLocal = false)
+        {
+            var filePath = path;
+            if (filePath.IsNoValue() || name.IsNoValue()) return;
+
+            byte[] buffer;
+            if (isLocal)
+            {
+                filePath = Server.MapPath(filePath);
+                using (var fs = new FileStream(filePath, FileMode.Open))
+                {
+                    buffer = new byte[(int) fs.Length];
+                    fs.Read(buffer, 0, buffer.Length);
+                    fs.Close();
+                }
+            }
+            else
+            {
+                var webResponse = (HttpWebResponse) ((HttpWebRequest) WebRequest.Create(path)).GetResponse();
+                using (var fs = webResponse.GetResponseStream())
+                {
+                    buffer = new byte[webResponse.ContentLength];
+                    int offset = 0, actuallyRead;
+                    do
+                    {
+                        actuallyRead = fs?.Read(buffer, offset, buffer.Length - offset) ?? 0;
+                        offset += actuallyRead;
+                    }
+                    while (actuallyRead > 0);
+                    webResponse.Close();
+                }
+            }
+            Response.Clear();
+            Response.Charset = "UTF-8";
+            Response.ContentEncoding = System.Text.Encoding.GetEncoding("UTF-8");
+
+            Response.AddHeader("Content-Disposition", "attachment; filename=" + name);
+            Response.BinaryWrite(buffer);
+            Response.End();
         }
         #endregion
 
@@ -357,50 +400,6 @@ namespace Test.Controllers
 
             return list;
         } 
-        #region List转成DataTable
-        private DataTable ToDataTable<T>(List<T> items)
-        {
-            var tb = new DataTable(typeof(T).Name);
-
-            var props = typeof(T).GetProperties(BindingFlags.Public | BindingFlags.Instance);
-
-            foreach (var prop in props)
-            {
-                var t = GetCoreType(prop.PropertyType);
-                tb.Columns.Add(prop.Name, t);
-            }
-
-            foreach (T item in items)
-            {
-                var values = new object[props.Length];
-
-                for (var i = 0; i < props.Length; i++)
-                {
-                    values[i] = props[i].GetValue(item, null);
-                }
-
-                tb.Rows.Add(values);
-            }
-
-            return tb;
-        }
-        public static bool IsNullable(Type t)
-        {
-            return !t.IsValueType || (t.IsGenericType && t.GetGenericTypeDefinition() == typeof(Nullable<>));
-        }
-        public static Type GetCoreType(Type t)
-        {
-            if (t != null && IsNullable(t))
-            {
-                if (!t.IsValueType)
-                {
-                    return t;
-                }
-                return Nullable.GetUnderlyingType(t);
-            }
-            return t;
-        }
-        #endregion
         #endregion
     }
 }

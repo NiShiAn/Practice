@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Data;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
@@ -43,6 +44,11 @@ namespace Test.COM.Tool
         #endregion
 
         #region String扩展
+
+        public static bool IsNoValue(this string value)
+        {
+            return string.IsNullOrEmpty(value) || string.IsNullOrWhiteSpace(value);
+        }
         public static int ToInt(this string value)
         {
             return int.Parse(value);
@@ -91,6 +97,59 @@ namespace Test.COM.Tool
                 return null;
             }
             return result;
+        }
+        #endregion
+
+        #region IEnumerable扩展
+        /// <summary>
+        /// IEnumerable转DataTable
+        /// </summary>
+        public static DataTable ToDataTable<T>(this IEnumerable<T> list)
+        {
+            var tb = new DataTable(typeof(T).Name);
+
+            var props = typeof(T).GetProperties(BindingFlags.Public | BindingFlags.Instance);
+
+            foreach (var prop in props)
+            {
+                var t = prop.PropertyType.GetCoreType();
+                tb.Columns.Add(prop.Name, t);
+            }
+
+            foreach (T item in list)
+            {
+                var values = new object[props.Length];
+
+                for (var i = 0; i < props.Length; i++)
+                {
+                    values[i] = props[i].GetValue(item, null);
+                }
+
+                tb.Rows.Add(values);
+            }
+
+            return tb;
+        }
+
+        #endregion
+
+        #region Type扩展
+        public static Type GetCoreType(this Type t)
+        {
+            if (t != null && t.IsCanNull())
+            {
+                if (!t.IsValueType)
+                {
+                    return t;
+                }
+                return Nullable.GetUnderlyingType(t);
+            }
+            return t;
+        }
+
+        public static bool IsCanNull(this Type t)
+        {
+            return !t.IsValueType || (t.IsGenericType && t.GetGenericTypeDefinition() == typeof (Nullable<>));
         }
         #endregion
     }

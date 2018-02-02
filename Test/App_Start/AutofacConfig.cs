@@ -86,6 +86,12 @@ namespace Test
             }
             return _container;
         }
-
+        /// <summary>
+        /// 获取实例
+        /// </summary>
+        public static T GetManager<T>()
+        {
+            return GetContainer().Resolve<T>();
+        }
     }
 }
