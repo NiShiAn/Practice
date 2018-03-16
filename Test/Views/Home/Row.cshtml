@@ -54,7 +54,61 @@
         top: 0;
         left: 0;
         position: absolute;
-    }  
+    }
+    .ul-line {
+        padding: 0;
+    }
+    .ul-line > li {
+        list-style: none;
+        display: block;
+        padding-left: 30px;
+        height: 25px;
+        line-height: 25px;
+    }
+    .ul-line > li > input[type=checkbox] {
+        margin-top: -2px;
+        margin-bottom: 1px;
+        vertical-align: middle;
+    }
+    .ul-line > li > span {
+        font-size: 12px;
+        font-weight: 600;
+        margin-left: 5px;
+    }
+    .ul-line > li > div {
+        cursor: pointer;
+        display: inline;
+    }
+    .ul-line > li > div > span {
+        color: cornflowerblue;
+    }
+    .ul-price {
+        border-radius: 2px;
+        color: #000;
+        position: absolute;
+        width: 200px;
+        height: 150px;
+        box-shadow: 1px 1px 10px rgba(0, 0, 0, 0.5);
+        background-color: #fff;
+        margin-left: 240px;
+        margin-top: -30px;
+        box-sizing: border-box;
+        padding: 20px 0;
+        z-index: 22;
+        display: none;
+    }
+    .ul-price li {
+        display: block;
+        font-size: 14px;
+        height: 14px;
+        line-height: 14px;
+        margin-bottom: 10px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        margin-left: 20px;
+    }
+
 </style>
 <h2>行内列表</h2>
 
@@ -85,7 +139,41 @@
             <td rowspan="4">说明信息测试</td>
             <td rowspan="4">4选2</td>
             <td><input type="checkbox" name="citem" onchange="tjs.ItemCheck(this);"/></td>
-            <td>棕榈泉购物</td>
+            <td>
+                棕榈泉购物
+                <ul class="ul-line">
+                    <li>
+                        <input type="checkbox"/>
+                        <span>默认行程</span>
+                    </li>
+                    <li>
+                        <input type="checkbox" />
+                        <span>方案一</span>
+                        <span>升级差价：￥50 起</span>
+                        <div class="desDiv">
+                            <span>价格详情</span>
+                            <ul class="ul-price">
+                                <li>同房第一人：￥20</li>
+                                <li>同房第二人：￥20</li>
+                                <li>附加费： ￥40</li>
+                            </ul>
+                        </div>
+                    </li>
+                    <li>
+                        <input type="checkbox" />
+                        <span>方案二</span>
+                        <span>升级差价：￥16 起</span>
+                        <div class="desDiv">
+                            <span>价格详情</span>
+                            <ul class="ul-price">
+                                <li>同房第一人：￥16</li>
+                                <li>同房第二人：￥18</li>
+                                <li>附加费： ￥80</li>
+                            </ul>
+                        </div>
+                    </li>
+                </ul>
+            </td>
             <td></td>
         </tr>
         <tr>
@@ -183,4 +271,21 @@
             }
         }
     }
+    $(function () {
+        $(".ul-line > li > div > span").on("click", function (e) {
+            //var e = window.event;
+            //if (e && e.stopPropagation)
+            //    e.stopPropagation();
+            //else {
+            //    window.event.cancelBubble = true;
+            //}
+            event.stopPropagation();
+            $(".ul-line > li > div > ul").css("display", "none");
+            $(this).parent().find('ul').css("display", "block");
+        });
+        $("body").click(function () {
+            $(".ul-line > li > div > ul").css("display", "none");
+        });
+    });
+
 </script>
