@@ -190,6 +190,7 @@ namespace Test.COM.Export
             
             //创建工作簿
             var sheet = workbook.CreateSheet(tuple.Item1);
+            
             //创建样式
             var tStyle = workbook.CreateCellStyle();//标题样式
             var font = workbook.CreateFont();
@@ -200,6 +201,8 @@ namespace Test.COM.Export
             tStyle.WrapText = false;//是否换行
             tStyle.FillForegroundColor = HSSFColor.Grey25Percent.Index;//灰色
             tStyle.FillPattern = FillPattern.SolidForeground;
+            //自定义颜色
+            //((XSSFColor)tStyle.FillForegroundColorColor).SetRgb(new byte[] { 226, 239, 218 });
             var cStyle = workbook.CreateCellStyle();//内容样式
             cStyle.Alignment = HorizontalAlignment.Center;
             cStyle.VerticalAlignment = VerticalAlignment.Center;
