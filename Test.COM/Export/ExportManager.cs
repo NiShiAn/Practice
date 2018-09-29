@@ -11,6 +11,7 @@ using NPOI.SS.UserModel;
 using NPOI.SS.Util;
 using NPOI.XSSF.UserModel;
 using NPOI.XWPF.UserModel;
+using Test.COM.Entity;
 
 namespace Test.COM.Export
 {
@@ -170,7 +171,7 @@ namespace Test.COM.Export
                             columnWidth = length;
                         }
                     }
-                    sheet.SetColumnWidth(columnNum, columnWidth * 256);
+                    sheet.SetColumnWidth(columnNum, columnWidth < 255 ? columnWidth * 256 : 6000);
                 }
             }
             var ms = new NpoiMemoryStream { AllowClose = false };
@@ -202,6 +203,9 @@ namespace Test.COM.Export
             tStyle.FillForegroundColor = HSSFColor.Grey25Percent.Index;//灰色
             tStyle.FillPattern = FillPattern.SolidForeground;
             //自定义颜色
+            //FSSFWorkbook
+            //tStyle.FillForegroundColor = workbook.GetCustomPalette().FindSimilarColor(226, 239, 218).Indexed;
+            //XSSFWorkbook
             //((XSSFColor)tStyle.FillForegroundColorColor).SetRgb(new byte[] { 226, 239, 218 });
             var cStyle = workbook.CreateCellStyle();//内容样式
             cStyle.Alignment = HorizontalAlignment.Center;
@@ -295,7 +299,7 @@ namespace Test.COM.Export
                             columnWidth = length;
                         }
                     }
-                    sheet.SetColumnWidth(columnNum, columnWidth * 256);
+                    sheet.SetColumnWidth(columnNum, columnWidth < 255 ? columnWidth * 256 : 6000);
                 }
             }
         }
@@ -378,7 +382,7 @@ namespace Test.COM.Export
                             columnWidth = length;
                         }
                     }
-                    sheet.SetColumnWidth(columnNum, columnWidth * 256);
+                    sheet.SetColumnWidth(columnNum, columnWidth < 255 ? columnWidth * 256 : 6000);
                 }
             }
         }
@@ -605,7 +609,7 @@ namespace Test.COM.Export
             }
             else if (fileName.EndsWith(".xls"))
             {
-                workbook = new HSSFWorkbook((FileStream) null);
+                workbook = new HSSFWorkbook(stream);
             }
 
             var sheetNum = workbook?.NumberOfSheets;
@@ -644,7 +648,7 @@ namespace Test.COM.Export
                     for (int j = row.FirstCellNum; j < cellCount; ++j)
                     {
                         if (row.GetCell(j) != null) //同理，没有数据的单元格都默认是null
-                            dataRow[j] = row.GetCell(j).ToString();
+                            dataRow[j] = GetCellValue(row.GetCell(j));
                     }
                     data.Rows.Add(dataRow);
                 }
@@ -654,6 +658,140 @@ namespace Test.COM.Export
 
             return ds;
         }
+        /// <summary>
+        /// 将excel中的数据导入到DataTable中
+        /// </summary>
+        /// <param name="sheetName">excel工作薄sheet的名称</param>
+        /// <param name="isFirstRowColumn">第一行是否是DataTable的列名</param>
+        /// <param name="path">文件位置</param>
+        /// <returns>返回的DataTable</returns>
+        public DataTable ExcelToDataTable(string sheetName, bool isFirstRowColumn, string path = null, Stream file = null, int datafirst = 0)
+        {
+            IWorkbook workbook = null;
+            ISheet sheet = null;
+            DataTable data = new DataTable("Jielv_Table");
+            int startRow = 0;
+            try
+            {
+                //参数问题
+                if (file == null) return null;
+
+                if (path.IndexOf(".xlsx") > 0) // 2007版本
+                    workbook = new XSSFWorkbook(file);
+                else if (path.IndexOf(".xls") > 0) // 2003版本
+                    workbook = new HSSFWorkbook(file);
+
+                if (sheetName != null)
+                {
+                    sheet = workbook.GetSheet(sheetName);
+                    if (sheet == null) //如果没有找到指定的sheetName对应的sheet，则尝试获取第一个sheet
+                    {
+                        sheet = workbook.GetSheetAt(0);
+                    }
+                }
+                else
+                {
+                    sheet = workbook.GetSheetAt(0);
+                }
+
+                System.Collections.IEnumerator rows = sheet.GetRowEnumerator();
+
+                if (sheet != null)
+                {
+                    IRow firstRow = sheet.GetRow(datafirst);
+                    int cellCount = firstRow.LastCellNum; //一行最后一个cell的编号 即总的列数
+
+                    if (isFirstRowColumn)
+                    {
+                        for (int i = firstRow.FirstCellNum; i < cellCount; ++i)
+                        {
+                            var cell = firstRow.GetCell(i);
+
+                            cell.SetCellType(CellType.String);
+
+                            if (cell != null)
+                            {
+                                string cellValue = cell.StringCellValue;
+                                if (cellValue != null)
+                                {
+                                    DataColumn column = new DataColumn(cellValue);
+                                    data.Columns.Add(column);
+                                }
+                            }
+                        }
+                        startRow = sheet.FirstRowNum + 1;
+                    }
+                    else
+                    {
+                        startRow = sheet.FirstRowNum + datafirst;
+                    }
+
+                    //最后一列的标号
+                    int rowCount = sheet.LastRowNum;
+                    for (int i = startRow; i <= rowCount; ++i)
+                    {
+                        IRow row = sheet.GetRow(i);
+                        if (row == null || row.Cells.Count == 0) continue; //没有数据的行默认是null　　　　　　　
+
+                        DataRow dataRow = data.NewRow();
+                        for (int j = row.FirstCellNum; j < cellCount; ++j)
+                        {
+                            if (row.GetCell(j) != null) //同理，没有数据的单元格都默认是null
+                                dataRow[j] = row.GetCell(j).ToString();
+                        }
+                        data.Rows.Add(dataRow);
+                    }
+                }
+
+                return data;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Exception: " + ex.Message);
+                return null;
+            }
+        }
+        /// <summary>
+        /// 获取单元格内容
+        /// 主要是时间格式转换String
+        /// </summary>
+        /// <param name="cell">单元格</param>
+        /// <returns>string</returns>
+        private string GetCellValue(NPOI.SS.UserModel.ICell cell)
+        {
+            var value = string.Empty;
+            try
+            {
+                if (cell.CellType != CellType.Blank)
+                {
+                    switch (cell.CellType)
+                    {
+                        case CellType.Numeric:
+                            // Date comes here
+                            value = DateUtil.IsCellDateFormatted(cell) ? cell.DateCellValue.ToString() : cell.NumericCellValue.ToString();
+                            break;
+                        case CellType.Boolean:
+                            // Boolean type
+                            value = cell.BooleanCellValue.ToString();
+                            break;
+                        case CellType.Formula:
+                            value = cell.CellFormula;
+                            break;
+                        default:
+                            // String type
+                            value = cell.StringCellValue;
+                            break;
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                value = "";
+            }
+
+            return value;
+        }
         #endregion
+
     }
 }

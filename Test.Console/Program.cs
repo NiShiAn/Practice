@@ -23,9 +23,13 @@ namespace Test.Console
             //StrIntercept();
             //TimeSerch();
             //LocalTime();
-            FactoryFun();
+            //FactoryFun();
             //StrSort();
             //ListJoin();
+            //new linq().Where();
+            //StrDateTime();
+            //NumWeeks(new DateTime(2018, 7, 18));
+            Expect();
         }
         /// <summary>
         /// 最大宽度换行
@@ -173,9 +177,9 @@ namespace Test.Console
                 new Sheet1() {A = "9", B = "SFB"}
             };
 
-            var l3 = (from a in l1
-                join b in l2 on new {d1 = a.Id, d2 = a.Name} equals new {d1 = b.A.ToInt(), d2 = b.B}
-                select a).ToList();
+            //var l3 = (from a in l1
+            //    join b in l2 on new {d1 = a.Id, d2 = a.Name} equals new {d1 = b.A.ToInt(), d2 = b.B}
+            //    select a).ToList();
 
         }
 
@@ -197,5 +201,92 @@ namespace Test.Console
             var list = Common.Enum2List<BookEnum.State>("1");
             System.Console.ReadKey(true);
         }
+
+        protected static void StrDateTime()
+        {
+            //var strAry = new[] { "20180201", "10:20:19" };
+            //var sDate = "";
+            //foreach(var str in strAry)
+            //{
+            //    if (str.Contains(":"))
+            //    {
+            //        sDate += $" {str}";
+            //    }
+            //    else
+            //    {
+            //        var s1 = str.Substring(0, 4);
+            //        var s2 = str.Substring(4, 2);
+            //        var s3 = str.Substring(6, 2);
+            //        sDate += $"{s1}/{s2}/{s3}";
+            //    }
+            //}
+            //var date = Convert.ToDateTime(sDate);
+            //System.Console.ReadKey();
+
+        }
+        /// <summary>
+        /// 获得本月有几周
+        /// </summary>
+        /// <param name="a"></param>
+        /// <returns></returns>
+        public static void NumWeeks(DateTime dt)
+        {
+            //年
+            int year = dt.Year;
+            //月
+            int month = dt.Month;
+            //当前月第一天
+            DateTime weekStart = new DateTime(year, month, 1);
+            //该月的最后一天
+            DateTime monEnd = weekStart.AddMonths(1).AddDays(-1);
+            int i = 1;
+            //当前月第一天是星期几
+            int dayOfWeek = Convert.ToInt32(weekStart.DayOfWeek.ToString("d"));
+            //该月第一周结束日期
+            DateTime weekEnd = dayOfWeek == 0 ? weekStart : weekStart.AddDays(7 - dayOfWeek);
+
+            System.Console.WriteLine("第" + i + "周起始日期： " + weekStart.ToShortDateString() + "   结束日期： " + weekEnd.ToShortDateString());
+
+            //当日期小于或等于该月的最后一天
+            while (weekEnd.AddDays(1) <= monEnd)
+            {
+                i++;
+                //该周的开始时间
+                weekStart = weekEnd.AddDays(1);
+                //该周结束时间
+                weekEnd = weekEnd.AddDays(7) > monEnd ? monEnd : weekEnd.AddDays(7);
+
+                System.Console.WriteLine("第" + i + "周起始日期： " + weekStart.ToShortDateString() + "   结束日期： " + weekEnd.ToShortDateString());
+            }
+            System.Console.WriteLine(year + "年" + month + "月共有" + i + "周");
+            System.Console.ReadKey();
+        }
+
+        public static void Expect()
+        {
+            var ary1 = new List<int>(){ 1, 2, 7, 8, 6, 4 };
+            var ary2 = new List<int>(){ 4, 3, 8, 9 };
+            var ary3 = new List<int>(){ 7, 2, 8, 1, 5 };
+            //1,2,3,4,7,9
+
+            var t1 = ary1.Except(ary3).Count();
+            var t2 = ary1.All(n => ary3.Contains(n));
+
+            //var ary3 = ary2.Except(ary1);
+            //var ary4 = ary1.Except(ary2);
+
+            //var ary5 = ary3.Union(ary4).OrderBy(n => n);
+
+            var dicList = new Dictionary<int, List<int>>()
+            {
+                {1, ary1 },
+                {2, ary2 },
+                {3, ary3 },
+            };
+
+            var rows = dicList.Max(n => n.Value.Count);
+        }
+
+
     }
 }

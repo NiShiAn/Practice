@@ -1,0 +1,20 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>表格行拖拽</h2>
+
+<div class="container">
+    <div id="simpleList" class="list-group">
+        <div class="list-group-item">This is <a href="http://rubaxa.github.io/Sortable/">Sortable</a></div>
+        <div class="list-group-item">It works with Bootstrap...</div>
+        <div class="list-group-item">...out of the box.</div>
+        <div class="list-group-item">It has support for touch devices.</div>
+        <div class="list-group-item">Just drag some elements around.</div>
+    </div>
+</div>
+
+<script src="/scripts/Sortable.js" type="text/javascript"></script>
+<script>
+    Sortable.create(simpleList);
+</script>

@@ -10,7 +10,9 @@ namespace Test.DAO.DaoBase
     public class BaseManager<T> : IBaseManager<T> where T : class, new ()
     {
         #region
-        private static readonly string mySqlConnetStr = "server=192.168.199.243;Database=test;Uid=root;Pwd=1qazXSW@";
+        //private static readonly string mySqlConnetStr = "server=192.168.199.243;Database=test;Uid=root;Pwd=1qazXSW@";
+        private static readonly string mySqlConnetStr =
+            "server=47.94.160.77;user id=ngy001;password=fz917758;persistsecurityinfo=True;port=3306;database=freshly;SslMode=none";
         private readonly ISqlSugarClient _db = DbRepository.GetInstance(DbType.MySql, mySqlConnetStr);
         #endregion
 

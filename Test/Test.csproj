@@ -44,6 +44,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="AngleSharp, Version=0.9.9.0, Culture=neutral, PublicKeyToken=e83494dcdc6d31ea, processorArchitecture=MSIL">
+      <HintPath>..\packages\AngleSharp.0.9.10\lib\net45\AngleSharp.dll</HintPath>
+    </Reference>
     <Reference Include="Autofac, Version=4.6.2.0, Culture=neutral, PublicKeyToken=17863af14b0044da, processorArchitecture=MSIL">
       <HintPath>..\packages\Autofac.4.6.2\lib\net45\Autofac.dll</HintPath>
       <Private>True</Private>
@@ -90,6 +93,7 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="System.IO.Compression.FileSystem" />
+    <Reference Include="System.Net.Http" />
     <Reference Include="System.Numerics" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Web.DynamicData" />
@@ -153,6 +157,7 @@
     <Content Include="scripts\jquery-ui.min.js" />
     <Content Include="scripts\jquery.dragsort.min.js" />
     <Content Include="scripts\jquery.form.js" />
+    <Content Include="scripts\jquery.unobtrusive-ajax.min.js" />
     <Content Include="scripts\modernizr-2.6.2.js" />
     <Content Include="scripts\plus\css.min.js" />
     <Content Include="scripts\plus\pinyin\dict\pinyin_dict_firstletter.js" />
@@ -162,9 +167,12 @@
     <Content Include="scripts\plus\pinyin\pinyinUtil.js" />
     <Content Include="scripts\plus\plusMain.js" />
     <Content Include="scripts\plus\require.js" />
+    <Content Include="scripts\plus\select2\select2-bootstrap.css" />
     <Content Include="scripts\plus\select2\select2.min.css" />
     <Content Include="scripts\plus\select2\select2.min.js" />
     <Content Include="scripts\plus\test.js" />
+    <Content Include="scripts\Sortable.js" />
+    <Content Include="scripts\Sortable.min.js" />
     <Content Include="Web.config" />
     <Content Include="Views\Home\Box.cshtml" />
     <Content Include="Views\Home\Table.cshtml" />
@@ -172,6 +180,7 @@
   <ItemGroup>
     <Compile Include="App_Start\AutofacConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
+    <Compile Include="Controllers\BuggerController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
@@ -204,6 +213,12 @@
     <Content Include="Views\Home\Column.cshtml" />
     <Content Include="Views\Home\Carousel.cshtml" />
     <Content Include="Views\Home\Drag.cshtml" />
+    <Content Include="Views\Home\Flex.cshtml" />
+    <Content Include="Temple\产品详情.docx" />
+    <Content Include="Views\Home\Bind.cshtml" />
+    <Content Include="Views\Bugger\Index.cshtml" />
+    <Content Include="Views\Bugger\List.cshtml" />
+    <Content Include="Views\Home\FixTab.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -219,6 +234,10 @@
     <ProjectReference Include="..\Test.COM\Test.COM.csproj">
       <Project>{d59d8d65-b686-4204-bfff-91aa6dbf3c5a}</Project>
       <Name>Test.COM</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Test.DAO\Test.DAO.csproj">
+      <Project>{B62FEA75-8DDC-4A92-86C2-3ECB81417A8F}</Project>
+      <Name>Test.DAO</Name>
     </ProjectReference>
   </ItemGroup>
   <PropertyGroup>

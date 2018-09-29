@@ -1,0 +1,19 @@
+﻿@{
+    ViewBag.Title = "主页";
+}
+
+<h2>爬虫测试</h2>
+
+<div class="container">
+    @using (Ajax.BeginForm("RequestPage", "Bugger", FormMethod.Post, new AjaxOptions { UpdateTargetId = "mainDiv" }, new { @class = "form-inline", role = "form" }))
+    {
+        <div class="form-group">
+            <label class="control-label">网址</label>
+            @Html.TextBox("url", "http://www.gamersky.com/handbook/201712/990164.shtml", new { @class = "form-control inline", style = "width: 300px;" })
+        </div>
+        <div class="form-group">
+            <button type="submit" class="btn btn-primary">启动</button>
+        </div>
+    }
+    <div id="mainDiv" style="margin-top: 20px;"></div>
+</div>

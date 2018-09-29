@@ -1,0 +1,25 @@
+﻿@model List<Test.COM.Entity.BaseItem>
+@{
+    ViewBag.Title = "List";
+    Layout = null;
+}
+
+<table class="table">
+    <tr class="active">
+        <th>标题</th>
+        <th>说明</th>
+    </tr>
+    <tbody>
+        @if (Model != null && Model.Any())
+        {
+            foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.Key</td>
+                    <td>@item.Value</td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>
+

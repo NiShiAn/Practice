@@ -10,16 +10,18 @@ using Newtonsoft.Json;
 using Test.COM.Entity;
 using Test.COM.Export;
 using Test.COM.Tool;
+using Test.DAO.DaoBase;
 
 namespace Test.Controllers
 {
     public class HomeController : Controller
     {
         private readonly IExportManager _exportManager;
-
-        public HomeController(IExportManager exportManager)
+        private readonly ISpireManager _spireManager;
+        public HomeController(IExportManager exportManager, ISpireManager spireManager)
         {
             _exportManager = exportManager;
+            _spireManager = spireManager;
         }
 
         #region 功能页面
@@ -69,6 +71,21 @@ namespace Test.Controllers
         }
 
         public ActionResult Carousel()
+        {
+            return View();
+        }
+
+        public ActionResult Flex()
+        {
+            return View();
+        }
+
+        public ActionResult Bind()
+        {
+            return View();
+        }
+
+        public ActionResult FixTab()
         {
             return View();
         }
@@ -136,13 +153,16 @@ namespace Test.Controllers
                         };
                         stream = AutofacConfig.GetManager<IExportManager>().ExportExcelBatchDataTable(tupleList2, true);
                         break;
-                    default:
+                    case 4:
                         var tupleList3 = new List<Tuple<string, Dictionary<string, string>, DataTable>>()
                         {
                             new Tuple<string, Dictionary<string, string>, DataTable>("团队信息", colums3, tour.ToDataTable()),
                             new Tuple<string, Dictionary<string, string>, DataTable>("景点信息", colums2, list.ToDataTable()),
                         };
                         stream = AutofacConfig.GetManager<IExportManager>().ExportExcelBlockData("颠倒日月", tupleList3, true);
+                        break;
+                    default:
+                        stream = AutofacConfig.GetManager<ISpireManager>().ExportExcel();
                         break;
                 }
 
@@ -220,12 +240,18 @@ namespace Test.Controllers
                 {
                     case 1:
                         stream = _exportManager.ExportWordTemplate(Server.MapPath("~/Temple/个人信息.docx"), colums1);
+                        //stream = _spireManager.ExportWord(Server.MapPath("~/Temple/个人信息.docx"), colums1);
                         break;
                     case 2:
                         stream = _exportManager.ExportWordCreateTable(Server.MapPath("~/Temple/景点信息.docx"), colums2, tupleList1);
+                        //stream = _spireManager.ExportWord(Server.MapPath("~/Temple/景点信息.docx"), colums2, tupleList1);
+                        break;
+                    case 3:
+                        stream = _exportManager.ExportWordExtendTable(Server.MapPath("~/Temple/出游计划.docx"), colums5, tupleList2);
+                        //stream = _spireManager.ExportWord(Server.MapPath("~/Temple/出游计划.docx"), colums5, tupleList2);
                         break;
                     default:
-                        stream = _exportManager.ExportWordExtendTable(Server.MapPath("~/Temple/出游计划.docx"), colums5, tupleList2);
+                        stream = _spireManager.ExportWord(Server.MapPath("~/Temple/景点信息.docx"), colums2, tupleList1);
                         break;
                 }
 
@@ -265,13 +291,20 @@ namespace Test.Controllers
                 }
 
                 var ds = _exportManager.ExcelToDataTableByStream(true, myfile.InputStream, fileName);
-
                 if (ds == null || ds.Tables.Count <= 0 || ds.Tables[0].Rows.Count == 0)
                 {
                     errors.Add("失败,文件内没有内容！");
-                    return Json(new {success = false, data = errors}, JsonRequestBehavior.AllowGet);
+                    return Json(new { success = false, data = errors }, JsonRequestBehavior.AllowGet);
                 }
                 var dt = ds.Tables[0];
+                ImportXenoblade2(dt);
+                //var dt = _exportManager.ExcelToDataTable("", true, null, myfile.InputStream);
+                //if (dt == null || dt.Rows.Count == 0)
+                //{
+                //    errors.Add("失败,文件内没有内容！");
+                //    return Json(new { success = false, data = errors }, JsonRequestBehavior.AllowGet);
+                //}
+
                 //验证列是否存在
                 var colums = "队员,号码,位置,年级,绰号";
                 errors.AddRange(from msg in colums.Split(',') where dt.Columns[msg] == null select $"该导入的文件中没有\"{msg}\"这一列！");
@@ -338,6 +371,18 @@ namespace Test.Controllers
             Response.BinaryWrite(buffer);
             Response.End();
         }
+
+        public ActionResult GetDropDowm()
+        {
+            var list = new List<BaseItem>()
+            {
+                new BaseItem(){ Id = "2", Text = "第二天"},
+                new BaseItem(){ Id = "3", Text = "第三天"},
+                new BaseItem(){ Id = "4", Text = "第四天"},
+                new BaseItem(){ Id = "5", Text = "第五天"},
+            };
+            return Json(list, JsonRequestBehavior.AllowGet);
+        }
         #endregion
 
         #region 私有
@@ -399,7 +444,97 @@ namespace Test.Controllers
             }
 
             return list;
-        } 
+        }
+
+        /// <summary>
+        /// 导入异度之刃2Excel
+        /// </summary>
+        /// <param name="dt"></param>
+        private void ImportXenoblade2(DataTable dt)
+        {
+            if(dt.Rows.Count < 1)
+                return;
+
+            var bmanager = new BaseManager<Xblade2>();
+            var bsmanager = new BaseManager<Xblade2_Sub>();
+            foreach (DataRow dr in dt.Rows)
+            {
+                var info = new Xblade2()
+                {
+                    Name = dr[0].ToString(),
+                    Role = dr[1].ToString(),
+                    Partner = dr[2].ToString(),
+                    Fetter = dr[3].ToString(),
+                    Target = dr[4].ToString(),
+                    IsActive = true,
+                    CreateBy = "erose",
+                    CreateDate = DateTime.Now
+                };
+
+                var idx = bmanager.Insert(info);
+
+                var list = new List<Xblade2_Sub>();
+                if (!string.IsNullOrEmpty(dr[5].ToString()))
+                {
+                    list.AddRange(dr[5].ToString().Split('\n').Select(n => new Xblade2_Sub()
+                    {
+                        Xkey = idx,
+                        Equib = n,
+                        Genrn = "饰品",
+                        IsReach = false,
+                        IsActive = true,
+                        CreateBy = "erose",
+                        CreateDate = DateTime.Now
+
+                    }));
+                }
+                if (!string.IsNullOrEmpty(dr[6].ToString()))
+                {
+                    list.Add(new Xblade2_Sub()
+                    {
+                        Xkey = idx,
+                        Equib = dr[6].ToString(),
+                        Genrn = "晶片",
+                        IsReach = false,
+                        IsActive = true,
+                        CreateBy = "erose",
+                        CreateDate = DateTime.Now
+
+                    });
+                }
+                if (!string.IsNullOrEmpty(dr[7].ToString()))
+                {
+                    list.AddRange(dr[7].ToString().Split('\n').Select(n => new Xblade2_Sub()
+                    {
+                        Xkey = idx,
+                        Equib = n,
+                        Genrn = "辅助核心",
+                        IsReach = false,
+                        IsActive = true,
+                        CreateBy = "erose",
+                        CreateDate = DateTime.Now
+
+                    }));
+                }
+                if (!string.IsNullOrEmpty(dr[8].ToString()))
+                {
+                    list.AddRange(dr[8].ToString().Split('\n').Select(n => new Xblade2_Sub()
+                    {
+                        Xkey = idx,
+                        Equib = n,
+                        Genrn = "喜好物品",
+                        IsReach = false,
+                        IsActive = true,
+                        CreateBy = "erose",
+                        CreateDate = DateTime.Now
+                    }));
+                }
+                foreach (var item in list)
+                {
+                    bsmanager.Insert(item);
+                }
+            }
+        }
         #endregion
     }
 }

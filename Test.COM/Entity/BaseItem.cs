@@ -4,6 +4,7 @@ namespace Test.COM.Entity
 {
     public class BaseItem
     {
+        public string Id { get; set; }
         /// <summary>
         /// 键
         /// </summary>

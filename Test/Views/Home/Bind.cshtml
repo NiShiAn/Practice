@@ -1,0 +1,74 @@
+﻿@{
+    ViewBag.Title = "绑定事件";
+}
+
+<div class="container">
+    <button class="btn btn-primary" onclick="myPage.Bind();">绑定</button>
+    <button class="btn btn-primary" onclick="myPage.EmptyTable();">清空</button>
+    <button class="btn btn-primary" onclick="myPage.ClearTable();">清除</button>
+    <button class="btn btn-primary" onclick="myPage.FillTable();">填充</button>
+    <table class="table" id="mytable" style="margin-top: 10px;">
+        <thead>
+            <tr class="active">
+                <th>姓名</th>
+                <th>性别</th>
+                <th>毕业学校</th>
+                <th>专业</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>
+                    <input type="text" style="border: none; width: 50%" value="彭于晏" />
+                </td>
+                <td>男</td>
+                <td>台北大学</td>
+                <td>111111111111111111</td>
+            </tr>
+            <tr>
+                <td>
+                    <input type="text" style="border: none; width: 50%" value="阮经天" />
+                </td>
+                <td>男</td>
+                <td></td>
+                <td>222222222222222222222</td>
+            </tr>
+            <tr>
+                <td>
+                    <input type="text" style="border: none; width: 50%" value="林更新" />
+                </td>
+                <td>男</td>
+                <td>台北大学</td>
+                <td>444444444444444444444444444</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<script>
+    var myPage = {
+        Bind: () => {
+            //$("#mytable").delegate('input' ,'change', function() {
+            //    alert("塞尔达");  
+            //});
+            $("#mytable").on('change', 'input',function () {
+                alert("是谁");
+            });
+
+        },
+        EmptyTable: () => {
+            $("#mytable tbody").empty();
+        },
+        ClearTable: () => {
+            $("#mytable tbody").html('');
+        },
+        FillTable: () => {
+            var html =
+                '<tr><td><input type="text" style="border: none;width: 50%" value="超级马里奥" /></td><td>是吗</td><td>还流传</td><td>独代</td></tr>\
+                <tr><td><input type="text" style="border: none;width: 50%" value="塞尔达传说" /></td><td>不是</td><td>返送</td><td>就是存在</td></tr>\
+                <tr><td><input type="text" style="border: none;width: 50%" value="奥德赛" /></td><td>淫邪</td><td>浪荡</td><td>棒棒哒</td></tr>';
+            $("#mytable tbody").append(html);
+        }
+       
+    }
+</script>

@@ -75,6 +75,8 @@ namespace Test.COM.Export
         /// <returns></returns>
         DataSet ExcelToDataTableByStream(bool isFirstColumn, Stream stream, string fileName);
 
+        DataTable ExcelToDataTable(string sheetName, bool isFirstRowColumn, string path = null, Stream file = null,
+            int datafirst = 0);
         #endregion
     }
 }
