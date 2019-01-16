@@ -1,0 +1,58 @@
+﻿#wrapper {
+    width: 980px;
+    margin: 0 auto;
+    margin: 1em;
+    width: auto;
+}
+
+#container {
+    border: 1px solid #dadada;
+    font-size: 12px;
+    margin-top: 10px;
+    background-color: #FFF;
+    padding: 8px;
+}
+
+#container ul.fileList {
+    list-style: none;
+    padding-left: 0;
+}
+
+#container ul.fileList li {
+    background-color: #F5F5F5;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+    font: 11px Verdana, Geneva, sans-serif;
+    margin-top: 5px;
+    max-width: 350px;
+    padding: 10px;
+}
+
+#container ul.fileList li.success {
+    background-color: #E5E5E5;
+}
+
+#container ul.fileList li.error {
+    background-color: #FDE5DD !important;
+}
+
+#container ul.fileList li .cancel a {
+    background: url('/Image/cancel.png') 0 0 no-repeat;
+    float: right;
+    height: 16px;
+    text-indent: -9999px;
+    width: 16px;
+}
+
+#container ul.fileList li .progret {
+    background-color: #E5E5E5;
+    margin-top: 10px;
+    width: 100%;
+}
+
+#container ul.fileList li .progret .bar {
+    background-color: #0099FF;
+    height: 3px;
+    width: 1px;
+}

@@ -143,8 +143,16 @@
     <Content Include="Content\jquery-ui.min.css" />
     <Content Include="Content\reset.css" />
     <Content Include="Content\Site.css" />
+    <Content Include="Content\upload_files.css" />
+    <Content Include="Content\upload_picture.css" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
+    <Content Include="Image\bg.png" />
+    <Content Include="Image\icons.png" />
+    <Content Include="Image\image.png" />
+    <Content Include="Image\progress.png" />
+    <Content Include="Image\success.png" />
+    <Content Include="Image\cancel.png" />
     <Content Include="scripts\ai.0.22.9-build00167.js" />
     <Content Include="scripts\ai.0.22.9-build00167.min.js" />
     <Content Include="scripts\bootstrap.js" />
@@ -154,10 +162,12 @@
     <Content Include="scripts\jquery-1.10.2.js" />
     <Content Include="scripts\jquery-1.10.2.min.js" />
     <Content Include="scripts\jquery-3.2.1.min.js" />
+    <Content Include="scripts\jquery-3.3.1.min.js" />
     <Content Include="scripts\jquery-ui.min.js" />
     <Content Include="scripts\jquery.dragsort.min.js" />
     <Content Include="scripts\jquery.form.js" />
     <Content Include="scripts\jquery.unobtrusive-ajax.min.js" />
+    <Content Include="scripts\loader.js" />
     <Content Include="scripts\modernizr-2.6.2.js" />
     <Content Include="scripts\plus\css.min.js" />
     <Content Include="scripts\plus\pinyin\dict\pinyin_dict_firstletter.js" />
@@ -171,8 +181,18 @@
     <Content Include="scripts\plus\select2\select2.min.css" />
     <Content Include="scripts\plus\select2\select2.min.js" />
     <Content Include="scripts\plus\test.js" />
+    <Content Include="scripts\plus\uploader\expressInstall.swf" />
+    <Content Include="scripts\plus\uploader\Uploader.swf" />
+    <Content Include="scripts\plus\uploader\webuploader.css" />
+    <Content Include="scripts\plus\uploader\webuploader.js" />
+    <Content Include="scripts\plus\uploadify\jquery.uploadify.min.js" />
+    <Content Include="scripts\plus\uploadify\uploadify-cancel.png" />
+    <Content Include="scripts\plus\uploadify\uploadify.css" />
+    <Content Include="scripts\plus\uploadify\uploadify.swf" />
     <Content Include="scripts\Sortable.js" />
     <Content Include="scripts\Sortable.min.js" />
+    <Content Include="scripts\uploadindex.js" />
+    <Content Include="Views\Home\Aloha.html" />
     <Content Include="Web.config" />
     <Content Include="Views\Home\Box.cshtml" />
     <Content Include="Views\Home\Table.cshtml" />
@@ -219,6 +239,8 @@
     <Content Include="Views\Bugger\Index.cshtml" />
     <Content Include="Views\Bugger\List.cshtml" />
     <Content Include="Views\Home\FixTab.cshtml" />
+    <Content Include="Views\Home\Iframe.cshtml" />
+    <Content Include="Views\Home\Uploader.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

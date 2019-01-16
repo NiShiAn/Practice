@@ -1,0 +1,28 @@
+﻿@{
+    ViewBag.Title = "跨域存储";
+}
+
+<h2 id="color" style="color: #000;">跨域存储</h2>
+
+<div class="container">
+    <iframe src="http://aloha.ryq.com/Aloha.html" style="width: 100%; height: 600px; border: none;"></iframe>
+    <script>
+        window.onload = function() {    
+            // 在页面加载完成后主页面向iframe发送getColor请求（参数没实际用处）  
+            var st = window.localStorage.getItem("tess");
+            if (!st || st == "") {
+                st = "red";
+                window.localStorage.setItem("tess", st);
+            }
+            window.frames[0].postMessage(st, '*');    
+        }    
+        // 主页面监听message事件,初始化自身颜色  
+        // 主页面监听message事件,处理自身变色  
+        window.addEventListener('message', function(e) {
+            var color = e.data;    
+            document.getElementById('color').style.color  =  color;    
+            window.localStorage.setItem("tess", color);
+        }, false);    
+    </script>    
+</div>
+

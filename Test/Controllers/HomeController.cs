@@ -89,6 +89,16 @@ namespace Test.Controllers
         {
             return View();
         }
+
+        public ActionResult Iframe()
+        {
+            return View();
+        }
+
+        public ActionResult Uploader()
+        {
+            return View();
+        }
         #endregion
 
         #region 页面回调
@@ -297,7 +307,7 @@ namespace Test.Controllers
                     return Json(new { success = false, data = errors }, JsonRequestBehavior.AllowGet);
                 }
                 var dt = ds.Tables[0];
-                ImportXenoblade2(dt);
+                ImportXenbladeShop(dt);
                 //var dt = _exportManager.ExcelToDataTable("", true, null, myfile.InputStream);
                 //if (dt == null || dt.Rows.Count == 0)
                 //{
@@ -383,6 +393,13 @@ namespace Test.Controllers
             };
             return Json(list, JsonRequestBehavior.AllowGet);
         }
+
+        [HttpPost]
+        public void UploadImage()
+        {
+            var files = Request.Files;
+
+        }
         #endregion
 
         #region 私有
@@ -449,7 +466,6 @@ namespace Test.Controllers
         /// <summary>
         /// 导入异度之刃2Excel
         /// </summary>
-        /// <param name="dt"></param>
         private void ImportXenoblade2(DataTable dt)
         {
             if(dt.Rows.Count < 1)
@@ -533,6 +549,57 @@ namespace Test.Controllers
                 {
                     bsmanager.Insert(item);
                 }
+            }
+        }
+        /// <summary>
+        /// 导入异度之刃2Excel店铺信息
+        /// </summary>
+        private void ImportXenbladeShop(DataTable dt)
+        {
+            if (dt.Rows.Count < 1)
+                return;
+
+            var list = new List<ShopProduct>();
+            foreach (DataRow dr in dt.Rows)
+            {
+                list.Add(new ShopProduct()
+                {
+                    City = dr[0].ToString().Trim(),
+                    Category = dr[1].ToString().Trim(),
+                    Name = dr[2].ToString().Trim(),
+                    Effect = dr[3].ToString().Trim(),
+                    Material = dr[4].ToString().Trim(),
+                    Desc = dr[5].ToString().Trim()
+                });
+            }
+
+            var sManager = new BaseManager<Xblade2_Shop>();
+            var gManager = new BaseManager<Xblade2_Goods>();
+            foreach (var group in list.GroupBy(n => new{n.City, n.Category}))
+            {
+                var sId = sManager.Insert(new Xblade2_Shop()
+                {
+                    City = group.Key.City,
+                    Category = group.Key.Category,
+                    Property = group.First().Desc,
+                    IsActive = true,
+                    CreateBy = "erose",
+                    CreateDate = DateTime.Now
+                });
+
+                var gList = group.Select(n => new Xblade2_Goods()
+                {
+                    ShopId = sId,
+                    Name = n.Name,
+                    Effect = string.Join("@", n.Effect.Split('\n')),
+                    Material = n.Material != "产权" ? string.Join("@", n.Material.Split('\n')) : "",
+                    Desc = n.Material != "产权" ? n.Desc : "",
+                    IsActive = true,
+                    CreateBy = "erose",
+                    CreateDate = DateTime.Now
+                }).ToList();
+
+                gManager.InsertList(gList);
             }
         }
         #endregion

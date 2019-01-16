@@ -11,13 +11,13 @@
     <link rel="stylesheet" type="text/css" href="/Content/iconfont.css">
     <link rel="stylesheet" type="text/css" href="/scripts/plus/select2/select2.min.css">
     <link rel="stylesheet" type="text/css" href="/scripts/plus/select2/select2-bootstrap.css">
+    <script src="~/Scripts/jquery-3.3.1.min.js"></script>
     <script src="~/Scripts/modernizr-2.6.2.js"></script>
-    <script src="~/Scripts/jquery-3.2.1.min.js"></script>
     <script src="~/Scripts/bootstrap.min.js"></script>
     <script src="~/Scripts/jquery.form.js"></script>
     <script src="/scripts/extend.js"></script>
     <script src="/scripts/jquery.unobtrusive-ajax.min.js" type="text/javascript"></script>
-    <script src="/scripts/plus/require.js" defer async="true" data-main="/scripts/plus/plusMain"></script>
+    @*<script src="/scripts/plus/require.js" defer async="true" data-main="/scripts/plus/plusMain"></script>*@
 </head>
 <body>
     <div class="navbar navbar-inverse navbar-fixed-top">
@@ -41,6 +41,8 @@
                 @Html.ActionLink("图片轮播", "Carousel", "Home", new { area = "" }, new { @class = "navbar-brand" })
                 @Html.ActionLink("分块", "Flex", "Home", new { area = "" }, new { @class = "navbar-brand" })
                 @Html.ActionLink("绑定测试", "Bind", "Home", new { area = "" }, new { @class = "navbar-brand" })
+                @Html.ActionLink("跨域存储", "Iframe", "Home", new { area = "" }, new { @class = "navbar-brand" })
+                @Html.ActionLink("图片上传", "Uploader", "Home", new { area = "" }, new { @class = "navbar-brand" })
                 <br />
                 @Html.ActionLink("爬虫", "Index", "Bugger", null, new { @class = "navbar-brand" })
             </div>

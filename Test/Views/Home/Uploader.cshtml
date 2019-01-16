@@ -1,0 +1,82 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>图片上传</h2>
+
+@*图片上传*@
+<link rel="stylesheet" type="text/css" href="/scripts/plus/uploader/webuploader.css" />
+<link rel="stylesheet" type="text/css" href="/Content/upload_picture.css" />
+<script type='text/javascript' src='/scripts/plus/uploader/webuploader.js'></script>
+<script type="text/javascript" src="/scripts/loader.js"></script>
+
+<div class="container">
+    <div id="wrapper">
+        <div id="container"></div>
+    </div>
+</div>
+
+<script>
+    $(function () {
+        $('#container').webUploader({
+            type: 'image',
+            maxNum: 3,
+            action: '/Home/UploadImage',
+            singleSize: 5
+        });
+    });
+</script>
+
+@*文件上传*@
+@*<link rel="stylesheet" type="text/css" href="/scripts/plus/uploader/webuploader.css" />
+<link rel="stylesheet" type="text/css" href="/Content/upload_files.css" />
+<script type='text/javascript' src='/scripts/plus/uploader/webuploader.js'></script>
+<script type="text/javascript" src="/scripts/loader.js"></script>
+
+<div class="container">
+    <div id="wrapper">
+        <div id="container"></div>
+    </div>
+</div>
+
+<script>
+    $(function () {
+        $('#container').webUploader({
+            type: 'files',
+            id: 'filePicker2',
+            action: '/Home/UploadImage',
+            singleSize: 5,
+            delay: 3000
+        });
+    });
+</script>*@
+
+@*uploadify上传文件，须flash权限*@
+@*<link rel="stylesheet" type="text/css" href="~/scripts/plus/uploadify/uploadify.css">
+<script type="text/javascript" src="~/scripts/plus/uploadify/jquery.uploadify.min.js"></script>
+
+<div class="container">
+    <form>
+        <div id="queue"></div>
+        <input id="file_upload" name="file_upload" type="file" multiple>
+        <p><a onclick="up()">Upload Files</a></p>
+    </form>
+</div>
+
+<script>
+    $(function () {
+        $('#file_upload').uploadify({
+            'auto': true,
+            'formData': {
+                'timestamp': '1',
+                'token': '2'
+            },
+            'swf': '~/scripts/plus/uploadify/uploadify.swf',
+            'uploader': '/Home/UploadImage'
+        });
+    });
+
+    function up() {
+        $('#file_upload').uploadify('upload');
+    }
+</script>*@

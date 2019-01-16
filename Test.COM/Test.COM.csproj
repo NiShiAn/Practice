@@ -99,12 +99,17 @@
     <Compile Include="Entity\Book.cs" />
     <Compile Include="Entity\ConfigGroup.cs" />
     <Compile Include="Entity\BaseItem.cs" />
+    <Compile Include="Entity\DeadCells_Monster.cs" />
+    <Compile Include="Entity\DeadCells_Weapon.cs" />
     <Compile Include="Entity\ProductInfoDTO.cs" />
     <Compile Include="Entity\Sheet.cs" />
+    <Compile Include="Entity\ShopProduct.cs" />
     <Compile Include="Entity\SpotInfo.cs" />
     <Compile Include="Entity\TourInfo.cs" />
     <Compile Include="Entity\TourPlan.cs" />
     <Compile Include="Entity\Xblade2.cs" />
+    <Compile Include="Entity\Xblade2_Goods.cs" />
+    <Compile Include="Entity\Xblade2_Shop.cs" />
     <Compile Include="Entity\Xblade2_Sub.cs" />
     <Compile Include="Enums\BookEnum.cs" />
     <Compile Include="Export\ExportManager.cs" />

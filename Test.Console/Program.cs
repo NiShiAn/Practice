@@ -29,7 +29,8 @@ namespace Test.Console
             //new linq().Where();
             //StrDateTime();
             //NumWeeks(new DateTime(2018, 7, 18));
-            Expect();
+            //Expect();
+            DateCount();
         }
         /// <summary>
         /// 最大宽度换行
@@ -287,6 +288,11 @@ namespace Test.Console
             var rows = dicList.Max(n => n.Value.Count);
         }
 
+        public static void DateCount()
+        {
+            var date = DateTime.Now.AddMonths(-1*10);
 
+            var sd = (DateTime.Now - date).Days <= 180;
+        }
     }
 }
